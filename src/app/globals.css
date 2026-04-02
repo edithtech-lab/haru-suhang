@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1a1410;
+  --foreground: #f5e6d3;
+  --accent: #d4a574;
+  --accent-light: #f0d9b5;
+  --card-bg: rgba(212, 165, 116, 0.08);
+  --card-border: rgba(212, 165, 116, 0.2);
+  --success: #8fbc8f;
+  --muted: #8b7355;
+  --danger: #c75050;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-success: var(--success);
+  --color-muted: var(--muted);
+  --color-danger: var(--danger);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 2px;
+}
+
+/* 호흡 가이드 애니메이션 */
+@keyframes breathe-in {
+  0% { transform: scale(0.6); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+@keyframes breathe-out {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(0.6); opacity: 0.4; }
+}
+
+.breathe-in {
+  animation: breathe-in 4s ease-in-out forwards;
+}
+.breathe-out {
+  animation: breathe-out 4s ease-in-out forwards;
+}
+
+/* 108배 완료 축하 */
+@keyframes celebration {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.celebrate {
+  animation: celebration 0.6s ease-in-out 3;
+}
+
+/* 카드 hover */
+.card-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-hover:active {
+  transform: scale(0.98);
 }
