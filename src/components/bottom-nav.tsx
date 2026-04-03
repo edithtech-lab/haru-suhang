@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Hand, Timer, BookOpen, MoreHorizontal, X, Sparkles, Calendar, Music, CircleDot } from 'lucide-react'
+import { Home, Hand, Timer, BookOpen, MoreHorizontal, X, Sparkles, Calendar, Music, CircleDot, Trophy, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const MAIN_NAV = [
@@ -14,6 +14,8 @@ const MAIN_NAV = [
 ]
 
 const MORE_NAV = [
+  { href: '/challenge', icon: Trophy, label: '챌린지' },
+  { href: '/doban', icon: Users, label: '도반' },
   { href: '/yeomju', icon: CircleDot, label: '염주' },
   { href: '/sutra', icon: BookOpen, label: '경전' },
   { href: '/wisdom', icon: Sparkles, label: '법어' },
@@ -43,7 +45,7 @@ export function BottomNav() {
                 <X size={20} />
               </button>
             </div>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {MORE_NAV.map(({ href, icon: Icon, label }) => (
                 <Link
                   key={href}

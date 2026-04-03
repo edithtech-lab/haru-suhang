@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Hand, Timer, BookOpen, Calendar, LogIn, LogOut, Flame, CircleDot, Music } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { ChallengeWidget } from '@/components/challenge-widget'
 import { useAuth } from '@/lib/auth-context'
 import { getTodayStatus, getPracticeStats } from '@/lib/practice-store'
 import { DAILY_WISDOMS } from '@/lib/constants'
@@ -103,6 +104,9 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
+
+      {/* 챌린지 위젯 */}
+      <ChallengeWidget userId={user?.id ?? null} />
 
       {/* 오늘의 법어 */}
       <Card className="space-y-3">

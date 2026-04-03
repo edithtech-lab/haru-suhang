@@ -59,3 +59,9 @@ export const MEDITATION_TIMES = [
 
 // 108배 목표
 export const BAE_TARGET = 108
+
+// 아바타 이모지 옵션
+export const AVATAR_EMOJIS = [
+  '🙏', '🪷', '☸️', '🧘', '📿', '🕉️',
+  '🌸', '🌙', '⭐', '🔔', '🕯️', '🍃',
+]
