@@ -110,3 +110,12 @@ export interface GroupMemberStatus {
 export interface GroupWithStats extends Group {
   member_count: number
 }
+
+// ===== AI 챗봇 =====
+
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  created_at: string
+}

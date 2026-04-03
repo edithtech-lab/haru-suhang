@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Hand, Timer, BookOpen, Calendar, LogIn, LogOut, Flame, CircleDot, Music } from 'lucide-react'
+import { Hand, Timer, BookOpen, Calendar, LogIn, LogOut, Flame, CircleDot, Music, MessageCircle } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { ChallengeWidget } from '@/components/challenge-widget'
 import { useAuth } from '@/lib/auth-context'
@@ -115,6 +115,13 @@ export default function HomePage() {
           &ldquo;{todayWisdom.text}&rdquo;
         </p>
         <p className="text-sm text-accent text-right">- {todayWisdom.source}</p>
+        <Link
+          href="/wisdom"
+          className="flex items-center justify-center gap-1.5 text-sm text-accent hover:text-accent-light transition-colors pt-1"
+        >
+          <MessageCircle size={14} />
+          <span>부처님께 여쭙기</span>
+        </Link>
       </Card>
 
       {/* 수행 통계 */}

@@ -18,7 +18,7 @@ const MORE_NAV = [
   { href: '/doban', icon: Users, label: '도반' },
   { href: '/yeomju', icon: CircleDot, label: '염주' },
   { href: '/sutra', icon: BookOpen, label: '경전' },
-  { href: '/wisdom', icon: Sparkles, label: '법어' },
+  { href: '/wisdom', icon: Sparkles, label: '법문' },
   { href: '/ambient', icon: Music, label: '음향' },
   { href: '/calendar', icon: Calendar, label: '캘린더' },
 ]

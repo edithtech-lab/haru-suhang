@@ -78,3 +78,28 @@ body {
 .card-hover:active {
   transform: scale(0.98);
 }
+
+/* 채팅 버블 */
+.chat-bubble {
+  word-break: break-word;
+}
+.chat-bubble-user {
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+}
+.chat-bubble-assistant {
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+}
+
+/* 타이핑 애니메이션 */
+@keyframes typing-dot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+.chat-typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: typing-dot 1.2s ease-in-out infinite;
+}
