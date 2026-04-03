@@ -18,7 +18,7 @@ export default function YeobulPage() {
   const [count, setCount] = useState(0)
   const [started, setStarted] = useState(false)
   const [completed, setCompleted] = useState(false)
-  const startTimeRef = useRef(Date.now())
+  const startTimeRef = useRef(0)
   const TARGET = 108
 
   const handleMoktak = useCallback(() => {

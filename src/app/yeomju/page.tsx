@@ -18,14 +18,15 @@ export default function YeomjuPage() {
   const [mantraId, setMantraId] = useState(MANTRAS[0].id)
   const [count, setCount] = useState(0)
   const [completed, setCompleted] = useState(false)
-  const startTimeRef = useRef(Date.now())
+  const startTimeRef = useRef(0)
 
   const mantra = MANTRAS.find(m => m.id === mantraId)!
-  const progress = count / BEAD_COUNT
   const activeBeadIdx = Math.floor((count % 27))
 
   const handleCount = useCallback(() => {
     if (completed) return
+
+    if (count === 0) startTimeRef.current = Date.now()
 
     // 진동 피드백
     if (navigator.vibrate) navigator.vibrate(30)

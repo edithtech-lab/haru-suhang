@@ -263,6 +263,16 @@ export default function AmbientPage() {
     })
   }
 
+  const stopPlaying = useCallback(() => {
+    stopsRef.current.forEach(stop => stop())
+    stopsRef.current.clear()
+    ctxRef.current?.close()
+    ctxRef.current = null
+    if (timerRef.current) clearInterval(timerRef.current)
+    setPlaying(false)
+    setSleepRemaining(0)
+  }, [])
+
   const startPlaying = useCallback(() => {
     if (activeSounds.size === 0) return
 
@@ -292,17 +302,7 @@ export default function AmbientPage() {
         })
       }, 1000)
     }
-  }, [activeSounds, sleepTimer])
-
-  const stopPlaying = useCallback(() => {
-    stopsRef.current.forEach(stop => stop())
-    stopsRef.current.clear()
-    ctxRef.current?.close()
-    ctxRef.current = null
-    if (timerRef.current) clearInterval(timerRef.current)
-    setPlaying(false)
-    setSleepRemaining(0)
-  }, [])
+  }, [activeSounds, sleepTimer, stopPlaying])
 
   useEffect(() => {
     return () => { stopPlaying() }

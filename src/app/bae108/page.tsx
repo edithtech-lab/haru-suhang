@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Counter108 } from '@/components/counter-108'
 import { getSoundGenerator } from '@/components/audio-player'
 import { Button } from '@/components/ui/button'
@@ -15,11 +15,12 @@ export default function Bae108Page() {
   const [count, setCount] = useState(0)
   const [completed, setCompleted] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [startTime] = useState(Date.now())
+  const startTimeRef = useRef(0)
 
   const handleCount = useCallback(() => {
     if (completed) return
 
+    if (count === 0) startTimeRef.current = Date.now()
     const newCount = count + 1
     setCount(newCount)
     getSoundGenerator().playMoktak()
@@ -32,11 +33,11 @@ export default function Bae108Page() {
       }, 300)
 
       // 자동 저장
-      const durationSec = Math.floor((Date.now() - startTime) / 1000)
+      const durationSec = Math.floor((Date.now() - startTimeRef.current) / 1000)
       savePractice(user?.id ?? null, 'bae108', durationSec, BAE_TARGET, true)
         .then(() => setSaved(true))
     }
-  }, [count, completed, startTime, user])
+  }, [count, completed, user])
 
   const handleReset = () => {
     setCount(0)

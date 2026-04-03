@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { SUTRAS } from '@/lib/sutras'
 import type { Sutra } from '@/lib/sutras'
 import { cn } from '@/lib/utils'
