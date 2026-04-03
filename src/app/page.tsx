@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Hand, Timer, BookOpen, Calendar, LogIn, LogOut, Flame } from 'lucide-react'
+import { Hand, Timer, BookOpen, Calendar, LogIn, LogOut, Flame, CircleDot, Music } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
@@ -133,13 +133,27 @@ export default function HomePage() {
         </div>
       </Card>
 
-      {/* 캘린더 바로가기 */}
-      <Link href="/calendar">
-        <Card hover className="flex items-center gap-3">
-          <Calendar size={20} className="text-accent" />
-          <span className="text-sm font-medium">수행 캘린더 보기</span>
-        </Card>
-      </Link>
+      {/* 바로가기 */}
+      <div className="grid grid-cols-3 gap-3">
+        <Link href="/yeomju">
+          <Card hover className="flex flex-col items-center gap-2 py-4">
+            <CircleDot size={20} className="text-accent" />
+            <span className="text-xs font-medium">염주</span>
+          </Card>
+        </Link>
+        <Link href="/ambient">
+          <Card hover className="flex flex-col items-center gap-2 py-4">
+            <Music size={20} className="text-accent" />
+            <span className="text-xs font-medium">사찰 음향</span>
+          </Card>
+        </Link>
+        <Link href="/calendar">
+          <Card hover className="flex flex-col items-center gap-2 py-4">
+            <Calendar size={20} className="text-accent" />
+            <span className="text-xs font-medium">캘린더</span>
+          </Card>
+        </Link>
+      </div>
     </div>
   )
 }
