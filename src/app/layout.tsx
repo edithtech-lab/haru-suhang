@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Noto_Serif_KR } from 'next/font/google'
 import './globals.css'
 import { BottomNav } from '@/components/bottom-nav'
+import { SplashScreen } from '@/components/splash-screen'
 import { AuthProvider } from '@/lib/auth-context'
 
 // Noto Serif KR은 경전/법어 본문 한자 혼용 등 제한적으로만 사용
@@ -48,6 +49,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground relative">
+        <SplashScreen />
         <AuthProvider>
           <main className="flex-1 pb-20 max-w-lg mx-auto w-full relative">
             {children}

@@ -259,7 +259,13 @@ export default function HomePage() {
       {/* ===== 바로가기 — 미니멀 텍스트 링크 ===== */}
       <section className="animate-in stagger-4 px-5">
         <p className="label-tag mb-3">Explore</p>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link href="/journal" className="text-[15px] text-foreground hover:text-accent transition-colors">
+            마음기록 <span className="text-muted text-sm">→</span>
+          </Link>
+          <Link href="/sounds" className="text-[15px] text-foreground hover:text-accent transition-colors">
+            사운드 <span className="text-muted text-sm">→</span>
+          </Link>
           <Link href="/sutra" className="text-[15px] text-foreground hover:text-accent transition-colors">
             경전 <span className="text-muted text-sm">→</span>
           </Link>
