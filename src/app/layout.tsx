@@ -4,9 +4,10 @@ import './globals.css'
 import { BottomNav } from '@/components/bottom-nav'
 import { AuthProvider } from '@/lib/auth-context'
 
+// Noto Serif KR은 경전/법어 본문 한자 혼용 등 제한적으로만 사용
 const notoSerifKR = Noto_Serif_KR({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-noto-serif-kr',
   display: 'swap',
 })
@@ -27,7 +28,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0e0b08',
+  themeColor: '#000000',
 }
 
 export default function RootLayout({
@@ -46,9 +47,9 @@ export default function RootLayout({
         />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground relative overflow-x-hidden">
+      <body className="min-h-full flex flex-col bg-background text-foreground relative">
         <AuthProvider>
-          <main className="flex-1 pb-24 max-w-lg mx-auto w-full relative">
+          <main className="flex-1 pb-20 max-w-lg mx-auto w-full relative">
             {children}
           </main>
           <BottomNav />

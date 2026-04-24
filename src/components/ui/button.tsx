@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient' | 'serif'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient' | 'link'
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
 }
@@ -12,22 +12,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', loading, children, disabled, ...props }, ref) => {
     const variants = {
-      primary: 'bg-accent text-[#0e0b08] font-semibold hover:bg-accent-light',
+      primary: 'bg-foreground text-background font-medium hover:opacity-90',
       secondary: 'surface-paper text-foreground font-medium hover:bg-[var(--surface-hover)]',
-      outline: 'border border-[var(--surface-strong-border)] text-foreground font-medium hover:bg-[var(--surface-hover)]',
-      ghost: 'text-muted hover:text-foreground hover:bg-[var(--surface)]',
-      gradient: 'bg-gradient-to-r from-accent-deep via-accent to-accent-light text-[#0e0b08] font-semibold shadow-lg shadow-[var(--accent-glow)]',
-      serif: 'font-serif text-accent-light border-b border-[var(--accent-glow)] rounded-none px-1 hover:text-accent',
+      outline: 'border border-[var(--surface-strong-border)] text-foreground hover:bg-[var(--surface-hover)]',
+      ghost: 'text-foreground-dim hover:text-foreground hover:bg-[var(--surface)]',
+      gradient: 'bg-accent text-background font-medium hover:bg-accent-light shadow-lg shadow-[var(--accent-glow)]',
+      link: 'text-foreground-dim hover:text-foreground underline-offset-4 hover:underline rounded-none px-0 py-0',
     }
 
     const sizes = {
       sm: 'px-5 py-2 text-sm rounded-full',
       md: 'px-7 py-3 text-base rounded-full',
-      lg: 'px-9 py-4 text-lg rounded-full',
+      lg: 'px-9 py-4 text-base rounded-full',
     }
 
-    // serif variant은 rounded-full을 오버라이드
-    const sizeClass = variant === 'serif' ? 'text-base py-1' : sizes[size]
+    const sizeClass = variant === 'link' ? 'text-sm' : sizes[size]
 
     return (
       <button

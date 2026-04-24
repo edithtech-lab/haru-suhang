@@ -1,41 +1,47 @@
 @import "tailwindcss";
 
-/* ===== v2 Design Tokens — Open 톤 기반 ===== */
+/* ===== v2.1 Design Tokens — Open 앱 실제 분석 반영 ===== */
+/* - 순수 블랙 베이스 + 오프화이트 대비 */
+/* - 산세리프 중심 (세리프는 예외적으로만) */
+/* - Orb는 배경 아닌 콘텐츠 요소 */
 :root {
-  /* Base */
-  --background: #0e0b08;
-  --foreground: #f2ece3;
-  --foreground-dim: #c8bdae;
-  --muted: #7a6e5f;
-  --muted-deep: #4a4037;
+  /* Base — Open의 두 베이스 */
+  --background: #000000;
+  --foreground: #f5f0e8;
+  --foreground-dim: #a8a095;
+  --muted: #6b655c;
+  --muted-deep: #3d3934;
 
-  /* Accent */
-  --accent: #d4a574;
-  --accent-light: #e8cfa8;
-  --accent-deep: #9c7a52;
-  --accent-glow: rgba(212, 165, 116, 0.15);
+  /* Accent — Open의 시그니처 오렌지 */
+  --accent: #e8763a;
+  --accent-light: #f4a56f;
+  --accent-deep: #c45624;
+  --accent-glow: rgba(232, 118, 58, 0.2);
+
+  /* Orb gradients — 콘텐츠 요소용 (Peaceful/Energy 무드) */
+  --orb-energy: radial-gradient(circle at 35% 35%, #4a8fc7 0%, #e8763a 55%, #2a1810 100%);
+  --orb-peaceful: radial-gradient(circle at 35% 35%, #b8d4a8 0%, #8fa4c7 55%, #1a1f2e 100%);
+  --orb-warm: radial-gradient(circle at 35% 35%, #f4a56f 0%, #c45624 55%, #1a0e08 100%);
+  --orb-cream: radial-gradient(circle at 35% 35%, #e8d8b8 0%, #a89878 60%, transparent 100%);
 
   /* Semantic */
   --success: #8fb88d;
   --danger: #c97166;
+  --live: #e84a4a;
 
   /* Surface */
-  --surface: rgba(255, 248, 238, 0.03);
-  --surface-border: rgba(242, 236, 227, 0.06);
-  --surface-hover: rgba(255, 248, 238, 0.05);
-  --surface-strong: rgba(255, 248, 238, 0.06);
-  --surface-strong-border: rgba(242, 236, 227, 0.1);
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --surface-strong-border: rgba(255, 255, 255, 0.12);
 
-  /* Gradients */
-  --gradient-orb-amber: radial-gradient(circle at center, rgba(212, 165, 116, 0.35) 0%, transparent 70%);
-  --gradient-orb-peach: radial-gradient(circle at center, rgba(232, 168, 138, 0.28) 0%, transparent 70%);
-  --gradient-orb-cream: radial-gradient(circle at center, rgba(232, 207, 168, 0.22) 0%, transparent 70%);
-  --gradient-orb-deep: radial-gradient(circle at center, rgba(107, 78, 58, 0.4) 0%, transparent 70%);
-  --gradient-paper: linear-gradient(180deg, rgba(242, 236, 227, 0.02), transparent);
+  /* Hero overlay (이미지 위 텍스트용) */
+  --hero-gradient: linear-gradient(180deg, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
 
   /* Typography */
   --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-serif: var(--font-noto-serif-kr), 'Noto Serif KR', 'Noto Serif', Georgia, serif;
+  --font-serif: var(--font-noto-serif-kr), 'Noto Serif KR', Georgia, serif;
 
   /* Motion */
   --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
@@ -53,13 +59,14 @@
   --color-accent-deep: var(--accent-deep);
   --color-success: var(--success);
   --color-danger: var(--danger);
+  --color-live: var(--live);
   --color-surface: var(--surface);
   --color-surface-border: var(--surface-border);
   --color-surface-hover: var(--surface-hover);
   --color-surface-strong: var(--surface-strong);
   --color-surface-strong-border: var(--surface-strong-border);
 
-  /* 기존 호환 (마이그레이션 기간) */
+  /* 기존 호환 */
   --color-card-bg: var(--surface);
   --color-card-border: var(--surface-border);
   --color-glass-bg: var(--surface-strong);
@@ -79,17 +86,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Noto Serif KR은 경전 본문 한자 혼용 등 제한적으로만 사용 */
 .font-serif {
   font-family: var(--font-serif);
-  font-feature-settings: 'ss01', 'kern';
 }
 
-/* ===== 스크롤바 (subtle) ===== */
+/* ===== 스크롤바 ===== */
 ::-webkit-scrollbar { width: 2px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(212, 165, 116, 0.15); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
 
-/* ===== Surface (카드 대체) ===== */
+/* ===== Surface 유틸 ===== */
 .surface-subtle {
   background: var(--surface);
   border: 1px solid var(--surface-border);
@@ -97,15 +104,13 @@ body {
 .surface-paper {
   background: var(--surface-strong);
   border: 1px solid var(--surface-strong-border);
-  backdrop-filter: blur(24px) saturate(1.1);
-  -webkit-backdrop-filter: blur(24px) saturate(1.1);
 }
 .surface-ghost {
   background: transparent;
   border: 1px solid var(--surface-border);
 }
 
-/* ===== 글래스 (wisdom 챗봇 등 기존 호환) ===== */
+/* ===== 글래스 (wisdom 챗봇 호환) ===== */
 .glass {
   background: var(--surface-strong);
   backdrop-filter: blur(24px) saturate(1.1);
@@ -113,25 +118,42 @@ body {
   border: 1px solid var(--surface-strong-border);
 }
 
-/* ===== Bottom Nav 전용 — 불투명 + 강한 blur ===== */
+/* ===== Bottom Nav — Open처럼 배경과 녹아들지만 구분선으로 경계 ===== */
 .surface-nav {
-  background: rgba(20, 15, 11, 0.88);
-  backdrop-filter: blur(28px) saturate(1.4);
-  -webkit-backdrop-filter: blur(28px) saturate(1.4);
-  border: 1px solid rgba(242, 236, 227, 0.1);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--surface-border);
 }
 
-/* ===== 텍스트 포인트 ===== */
-.text-accent-glow {
-  color: var(--accent);
-  text-shadow: 0 0 20px var(--accent-glow);
+/* ===== Orb (콘텐츠용) ===== */
+.orb {
+  border-radius: 50%;
+  filter: blur(0px);
+}
+.orb-energy { background: var(--orb-energy); }
+.orb-peaceful { background: var(--orb-peaceful); }
+.orb-warm { background: var(--orb-warm); }
+.orb-cream { background: var(--orb-cream); }
+
+/* ===== Hero 이미지 오버레이 그라디언트 ===== */
+.hero-overlay {
+  background: var(--hero-gradient);
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-deep) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ===== Editorial 텍스트 헬퍼 ===== */
+.label-upper {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--foreground-dim);
+}
+
+.label-tag {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--muted);
 }
 
 /* ===== Card hover / press ===== */
@@ -143,10 +165,10 @@ body {
 }
 
 .card-elevated {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== Gradient border (Card variant='gradient'에서 사용) ===== */
+/* ===== Gradient border (Card variant='gradient') ===== */
 .gradient-border {
   position: relative;
 }
@@ -156,7 +178,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(212, 165, 116, 0.3), rgba(212, 165, 116, 0.05), rgba(212, 165, 116, 0.2));
+  background: linear-gradient(135deg, rgba(232, 118, 58, 0.3), rgba(232, 118, 58, 0.05), rgba(232, 118, 58, 0.2));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -165,12 +187,12 @@ body {
 
 /* ===== 엔트리 애니메이션 ===== */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in {
-  animation: fade-up 0.8s var(--ease-soft) both;
+  animation: fade-up 0.7s var(--ease-soft) both;
 }
 
 .stagger-1 { animation-delay: 0.05s; }
@@ -180,33 +202,14 @@ body {
 .stagger-5 { animation-delay: 0.4s; }
 .stagger-6 { animation-delay: 0.5s; }
 
-/* ===== Ambient orb drift (배경 오브) ===== */
-@keyframes orb-drift-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(5%, -3%) scale(1.05); }
-  66% { transform: translate(-3%, 4%) scale(0.95); }
+/* ===== 호흡 오브 (콘텐츠용 천천히 맥동) ===== */
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); filter: blur(0px); }
+  50% { transform: scale(1.04); filter: blur(1px); }
 }
-@keyframes orb-drift-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-4%, 3%) scale(1.08); }
-  66% { transform: translate(3%, -5%) scale(0.92); }
-}
-@keyframes orb-drift-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(3%, 3%) scale(1.1); }
-}
+.orb-pulse { animation: orb-pulse 6s var(--ease-breath) infinite; }
 
-.orb-drift-1 { animation: orb-drift-1 24s ease-in-out infinite; }
-.orb-drift-2 { animation: orb-drift-2 30s ease-in-out infinite; }
-.orb-drift-3 { animation: orb-drift-3 36s ease-in-out infinite; }
-
-/* ===== 호흡 ===== */
-@keyframes breathe {
-  0%, 100% { transform: scale(0.85); opacity: 0.6; }
-  50% { transform: scale(1); opacity: 1; }
-}
-.breathe { animation: breathe 8s var(--ease-breath) infinite; }
-
+/* ===== 호흡 (기존 meditation-timer 호환) ===== */
 @keyframes breathe-in {
   0% { transform: scale(0.6); opacity: 0.4; }
   100% { transform: scale(1); opacity: 0.8; }
@@ -226,7 +229,7 @@ body {
 }
 .celebrate { animation: celebration 0.5s ease-in-out 3; }
 
-/* ===== 채팅 ===== */
+/* ===== 채팅 (wisdom) ===== */
 .chat-bubble { word-break: break-word; }
 .chat-bubble-user { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; }
 .chat-bubble-assistant { border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; }
@@ -244,34 +247,19 @@ body {
   animation: typing-dot 1.2s ease-in-out infinite;
 }
 
-/* ===== 글로우 펄스 ===== */
+/* ===== Glow pulse (yeomju 호환) ===== */
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 24px var(--accent-glow); }
-  50% { box-shadow: 0 0 40px rgba(212, 165, 116, 0.25); }
+  50% { box-shadow: 0 0 40px rgba(232, 118, 58, 0.35); }
 }
 .glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
 
-/* ===== Shimmer (에디토리얼 텍스트 포인트) ===== */
-@keyframes shimmer {
-  0%, 100% { opacity: 0.85; }
-  50% { opacity: 1; }
+/* ===== Live indicator pulse ===== */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
-.shimmer { animation: shimmer 4s ease-in-out infinite; }
-
-/* ===== Divider (잡지 스타일) ===== */
-.divider-serif {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--muted);
-}
-.divider-serif::before,
-.divider-serif::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--surface-border);
-}
+.live-pulse { animation: live-pulse 1.5s ease-in-out infinite; }
 
 /* ===== 스크롤바 숨기기 ===== */
 .scrollbar-hide {
@@ -287,8 +275,7 @@ body {
 
 /* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
-  .orb-drift-1, .orb-drift-2, .orb-drift-3,
-  .breathe, .shimmer, .glow-pulse {
+  .orb-pulse, .glow-pulse, .live-pulse {
     animation: none;
   }
 }
