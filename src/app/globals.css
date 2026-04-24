@@ -113,6 +113,14 @@ body {
   border: 1px solid var(--surface-strong-border);
 }
 
+/* ===== Bottom Nav 전용 — 불투명 + 강한 blur ===== */
+.surface-nav {
+  background: rgba(20, 15, 11, 0.88);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border: 1px solid rgba(242, 236, 227, 0.1);
+}
+
 /* ===== 텍스트 포인트 ===== */
 .text-accent-glow {
   color: var(--accent);

@@ -18,7 +18,7 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 safe-area-bottom pointer-events-none">
       <div className="pointer-events-auto mx-auto max-w-lg px-4 pb-4">
-        <div className="rounded-full surface-paper border border-[var(--surface-strong-border)] shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        <div className="rounded-full surface-nav shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
           <div className="flex items-center justify-around px-2 py-2">
             {NAV_ITEMS.map(({ href, label, sub, matchPaths }) => {
               const active = pathname === href || matchPaths?.some(p => pathname.startsWith(p))
