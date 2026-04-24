@@ -245,7 +245,7 @@ export default function WisdomPage() {
               className={cn(
                 'chat-bubble max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line',
                 msg.role === 'user'
-                  ? 'chat-bubble-user bg-accent text-[#0f0d0a]'
+                  ? 'chat-bubble-user bg-accent text-background'
                   : 'chat-bubble-assistant glass text-foreground/85'
               )}
             >
@@ -318,7 +318,7 @@ export default function WisdomPage() {
             <button
               type="submit"
               disabled={!input.trim() || streaming || guestLimitReached}
-              className="p-3 rounded-xl bg-accent text-[#0f0d0a] disabled:opacity-30 transition-opacity"
+              className="p-3 rounded-xl bg-accent text-background disabled:opacity-30 transition-opacity"
             >
               <Send size={18} />
             </button>

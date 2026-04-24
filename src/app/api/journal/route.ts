@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
           contents: geminiContents,
           generationConfig: {
             temperature: 0.85,
-            maxOutputTokens: 600,
+            maxOutputTokens: 1800,
+            thinkingConfig: { thinkingBudget: 0 },
           },
         }),
       }
