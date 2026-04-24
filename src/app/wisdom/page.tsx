@@ -44,7 +44,6 @@ export default function WisdomPage() {
 
   const todayWisdom = DAILY_WISDOMS[new Date().getDate() % DAILY_WISDOMS.length]
 
-  // 대화 기록 로드
   useEffect(() => {
     if (authLoading) return
     if (user) {
@@ -58,7 +57,6 @@ export default function WisdomPage() {
     }
   }, [user, authLoading])
 
-  // 스크롤 유지
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
@@ -67,12 +65,10 @@ export default function WisdomPage() {
     scrollToBottom()
   }, [messages, streamingText, scrollToBottom])
 
-  // 메시지 전송
   const sendMessage = async (text: string) => {
     const trimmed = text.trim()
     if (!trimmed || streaming) return
 
-    // 비로그인 제한 체크
     if (!user) {
       const count = getGuestCount()
       if (count >= GUEST_LIMIT) return
@@ -93,7 +89,6 @@ export default function WisdomPage() {
     setStreaming(true)
     setStreamingText('')
 
-    // Supabase에 유저 메시지 저장
     if (user) {
       saveMessage(user.id, 'user', trimmed)
     }
@@ -151,7 +146,6 @@ export default function WisdomPage() {
 
       setMessages(prev => [...prev, assistantMsg])
 
-      // Supabase에 어시스턴트 메시지 저장
       if (user) {
         saveMessage(user.id, 'assistant', assistantMsg.content)
       }
@@ -159,7 +153,7 @@ export default function WisdomPage() {
       const errorMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: '죄송합니다. 잠시 후 다시 여쭈어 주세요. 🙏',
+        content: '죄송합니다. 잠시 후 다시 여쭈어 주세요.',
         created_at: new Date().toISOString(),
       }
       setMessages(prev => [...prev, errorMsg])
@@ -193,36 +187,38 @@ export default function WisdomPage() {
   return (
     <div className="flex flex-col h-[calc(100dvh-5rem)]">
       {/* 헤더 */}
-      <div className="px-4 pt-6 pb-3 text-center shrink-0">
-        <h1 className="text-2xl font-bold text-foreground">법문</h1>
+      <div className="px-5 pt-8 pb-4 text-center shrink-0">
+        <h1 className="text-2xl font-bold">
+          <span className="gradient-text">법문</span>
+        </h1>
         <p className="text-sm text-muted mt-1">부처님의 지혜로 마음의 안녕을</p>
       </div>
 
       {/* 스크롤 영역 */}
-      <div className="flex-1 overflow-y-auto px-4 space-y-4 pb-2">
+      <div className="flex-1 overflow-y-auto px-5 space-y-4 pb-2">
         {/* 오늘의 법문 카드 */}
-        <Card className="space-y-3">
+        <Card variant="gradient" className="space-y-3">
           <div className="flex items-center gap-2">
-            <Sparkles size={16} className="text-accent" />
-            <h2 className="text-sm font-medium text-accent">오늘의 법문</h2>
+            <Sparkles size={14} className="text-accent" />
+            <h2 className="text-xs font-semibold text-accent tracking-wide">오늘의 법문</h2>
           </div>
-          <p className="text-[15px] leading-relaxed text-foreground text-center">
+          <p className="text-[15px] leading-relaxed text-foreground/85 text-center">
             &ldquo;{todayWisdom.text}&rdquo;
           </p>
-          <p className="text-sm text-accent text-right">- {todayWisdom.source}</p>
+          <p className="text-sm text-accent/70 text-right font-medium">- {todayWisdom.source}</p>
         </Card>
 
         {/* 추천 질문 */}
         {messages.length === 0 && historyLoaded && (
           <div className="space-y-3">
-            <p className="text-sm text-muted text-center">부처님께 여쭈어 보세요</p>
+            <p className="text-sm text-muted/50 text-center">부처님께 여쭈어 보세요</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {SUGGESTED_QUESTIONS.map(q => (
                 <button
                   key={q}
                   onClick={() => sendMessage(q)}
                   disabled={streaming || guestLimitReached}
-                  className="px-3 py-1.5 text-sm rounded-full border border-card-border text-foreground/80 hover:bg-card-bg hover:text-accent transition-colors disabled:opacity-40"
+                  className="px-4 py-2 text-sm rounded-full glass text-foreground/70 hover:text-accent transition-all disabled:opacity-30"
                 >
                   {q}
                 </button>
@@ -236,21 +232,21 @@ export default function WisdomPage() {
           <div
             key={msg.id}
             className={cn(
-              'flex gap-2',
+              'flex gap-2.5',
               msg.role === 'user' ? 'justify-end' : 'justify-start'
             )}
           >
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-1">
-                <span className="text-base">🪷</span>
+              <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+                <span className="text-sm">🪷</span>
               </div>
             )}
             <div
               className={cn(
                 'chat-bubble max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line',
                 msg.role === 'user'
-                  ? 'chat-bubble-user bg-accent text-[#1a1410]'
-                  : 'chat-bubble-assistant bg-card-bg text-foreground border border-card-border'
+                  ? 'chat-bubble-user bg-accent text-[#0f0d0a]'
+                  : 'chat-bubble-assistant glass text-foreground/85'
               )}
             >
               {msg.content}
@@ -260,11 +256,11 @@ export default function WisdomPage() {
 
         {/* 스트리밍 중 */}
         {streaming && (
-          <div className="flex gap-2 justify-start">
-            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0 mt-1">
-              <span className="text-base">🪷</span>
+          <div className="flex gap-2.5 justify-start">
+            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
+              <span className="text-sm">🪷</span>
             </div>
-            <div className="chat-bubble chat-bubble-assistant bg-card-bg text-foreground border border-card-border max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line">
+            <div className="chat-bubble chat-bubble-assistant glass text-foreground/85 max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line">
               {streamingText || (
                 <span className="inline-flex gap-1">
                   <span className="chat-typing-dot" />
@@ -279,14 +275,12 @@ export default function WisdomPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 비로그인 제한 안내 */}
+      {/* 비로그인 제한 */}
       {guestLimitReached && (
-        <div className="px-4 py-3 shrink-0">
-          <Card className="flex items-center justify-between">
-            <p className="text-sm text-foreground/80">
-              대화를 이어가려면 로그인이 필요합니다
-            </p>
-            <Button variant="primary" size="sm" onClick={signInWithGoogle} className="gap-1.5 shrink-0">
+        <div className="px-5 py-3 shrink-0">
+          <Card variant="glass" className="flex items-center justify-between">
+            <p className="text-sm text-foreground/70">대화를 이어가려면 로그인이 필요합니다</p>
+            <Button variant="gradient" size="sm" onClick={signInWithGoogle} className="gap-1.5 shrink-0">
               <LogIn size={14} />
               로그인
             </Button>
@@ -295,9 +289,9 @@ export default function WisdomPage() {
       )}
 
       {/* 입력창 */}
-      <div className="px-4 py-3 shrink-0 border-t border-card-border bg-background">
+      <div className="px-5 py-3 shrink-0 border-t border-card-border bg-background">
         <form onSubmit={handleSubmit} className="flex gap-2 items-end">
-          <div className="flex-1 relative">
+          <div className="flex-1">
             <textarea
               ref={inputRef}
               value={input}
@@ -306,7 +300,7 @@ export default function WisdomPage() {
               placeholder={guestLimitReached ? '로그인 후 이용 가능합니다' : '부처님께 여쭈어 보세요...'}
               disabled={streaming || guestLimitReached}
               rows={1}
-              className="w-full resize-none bg-card-bg border border-card-border rounded-xl px-4 py-3 pr-12 text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:border-accent/50 disabled:opacity-40"
+              className="w-full resize-none glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted/40 focus:outline-none focus:border-accent/30 disabled:opacity-30"
             />
           </div>
           <div className="flex gap-1.5">
@@ -315,7 +309,7 @@ export default function WisdomPage() {
                 type="button"
                 onClick={handleClear}
                 disabled={streaming}
-                className="p-3 rounded-xl text-muted hover:text-danger transition-colors disabled:opacity-40"
+                className="p-3 rounded-xl text-muted/40 hover:text-danger transition-colors disabled:opacity-30"
                 title="대화 기록 삭제"
               >
                 <Trash2 size={18} />
@@ -324,14 +318,14 @@ export default function WisdomPage() {
             <button
               type="submit"
               disabled={!input.trim() || streaming || guestLimitReached}
-              className="p-3 rounded-xl bg-accent text-[#1a1410] disabled:opacity-40 transition-opacity"
+              className="p-3 rounded-xl bg-accent text-[#0f0d0a] disabled:opacity-30 transition-opacity"
             >
               <Send size={18} />
             </button>
           </div>
         </form>
         {!user && !guestLimitReached && (
-          <p className="text-[11px] text-muted/60 text-center mt-1.5">
+          <p className="text-[11px] text-muted/30 text-center mt-1.5">
             비로그인 {GUEST_LIMIT - guestCount}회 남음
           </p>
         )}

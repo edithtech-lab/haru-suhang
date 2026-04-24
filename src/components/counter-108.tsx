@@ -42,17 +42,23 @@ export function Counter108({ count, onCount, completed }: Counter108Props) {
             cy="140"
             r={radius}
             fill="none"
-            stroke="rgba(212,165,116,0.15)"
-            strokeWidth="8"
+            stroke="rgba(201,168,124,0.08)"
+            strokeWidth="6"
           />
-          {/* 프로그레스 원 */}
+          {/* 프로그레스 원 - 그라디언트 */}
+          <defs>
+            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={completed ? '#6ecf8e' : '#c9a87c'} />
+              <stop offset="100%" stopColor={completed ? '#4abe6a' : '#e8d5b7'} />
+            </linearGradient>
+          </defs>
           <circle
             cx="140"
             cy="140"
             r={radius}
             fill="none"
-            stroke={completed ? '#8fbc8f' : '#d4a574'}
-            strokeWidth="8"
+            stroke="url(#progressGrad)"
+            strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -65,16 +71,16 @@ export function Counter108({ count, onCount, completed }: Counter108Props) {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
             className={cn(
-              'text-6xl font-bold transition-transform duration-100',
+              'text-6xl font-bold transition-transform duration-100 tracking-tight',
               pressing && 'scale-95',
-              completed ? 'text-success' : 'text-accent'
+              completed ? 'text-success' : 'gradient-text'
             )}
           >
             {count}
           </span>
-          <span className="text-muted text-sm mt-1">/ {BAE_TARGET}</span>
+          <span className="text-muted/60 text-sm mt-1 font-medium">/ {BAE_TARGET}</span>
           {completed && (
-            <span className="text-success text-sm mt-2 font-medium">
+            <span className="text-success text-sm mt-2 font-semibold">
               수행 완료
             </span>
           )}
@@ -82,7 +88,7 @@ export function Counter108({ count, onCount, completed }: Counter108Props) {
       </div>
 
       {!completed && (
-        <p className="text-muted text-sm">화면을 터치하여 절을 세세요</p>
+        <p className="text-muted/60 text-sm">화면을 터치하여 절을 세세요</p>
       )}
     </div>
   )

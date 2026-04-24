@@ -27,12 +27,10 @@ export default function Bae108Page() {
 
     if (newCount >= BAE_TARGET) {
       setCompleted(true)
-      // 종소리는 약간 딜레이
       setTimeout(() => {
         getSoundGenerator().playBell(1)
       }, 300)
 
-      // 자동 저장
       const durationSec = Math.floor((Date.now() - startTimeRef.current) / 1000)
       savePractice(user?.id ?? null, 'bae108', durationSec, BAE_TARGET, true)
         .then(() => setSaved(true))
@@ -46,13 +44,15 @@ export default function Bae108Page() {
   }
 
   return (
-    <div className="px-4 py-6 space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground">108배</h1>
-        <p className="text-sm text-muted mt-1">한 절 한 절, 마음을 내려놓으세요</p>
+    <div className="px-5 py-8 space-y-6">
+      <div className="text-center animate-in">
+        <h1 className="text-2xl font-bold">
+          <span className="gradient-text">108배</span>
+        </h1>
+        <p className="text-sm text-muted mt-1.5">한 절 한 절, 마음을 내려놓으세요</p>
       </div>
 
-      <div className="flex justify-center py-4">
+      <div className="flex justify-center py-4 animate-in stagger-1">
         <Counter108
           count={count}
           onCount={handleCount}
@@ -61,7 +61,7 @@ export default function Bae108Page() {
       </div>
 
       {completed && (
-        <Card className="text-center space-y-3">
+        <Card variant="glass" className="text-center space-y-3 animate-in">
           <p className="text-lg font-bold text-success">108배를 모두 마쳤습니다</p>
           <p className="text-sm text-muted">
             {saved ? '수행 기록이 저장되었습니다' : '기록 저장 중...'}

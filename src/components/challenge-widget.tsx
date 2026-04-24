@@ -23,7 +23,7 @@ export function ChallengeWidget({ userId }: { userId: string | null }) {
     : 0
 
   return (
-    <Link href="/challenge">
+    <Link href="/doban">
       <Card hover className="flex items-center gap-3">
         <span className="text-2xl">{challenge.badge_emoji}</span>
         <div className="flex-1 min-w-0">

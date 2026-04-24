@@ -95,27 +95,27 @@ export default function GroupDashboardPage() {
   }
 
   if (fetching) {
-    return <div className="px-4 py-12 text-center text-muted">불러오는 중...</div>
+    return <div className="px-5 py-12 text-center text-muted/40">불러오는 중...</div>
   }
 
   if (!group) return null
 
   return (
-    <div className="px-4 py-6 space-y-5">
+    <div className="px-5 py-8 space-y-6">
       {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <button onClick={() => router.push('/doban')} className="flex items-center gap-1 text-muted hover:text-foreground">
-          <ArrowLeft size={20} />
+      <div className="flex items-center justify-between animate-in">
+        <button onClick={() => router.push('/doban')} className="flex items-center gap-1 text-muted/50 hover:text-foreground transition-colors">
+          <ArrowLeft size={18} />
           <span className="text-sm">돌아가기</span>
         </button>
-        <button onClick={() => setShowProfile(!showProfile)} className="text-sm text-accent">
+        <button onClick={() => setShowProfile(!showProfile)} className="text-sm text-accent font-medium">
           내 프로필
         </button>
       </div>
 
       {/* 프로필 편집 */}
       {showProfile && (
-        <Card className="space-y-3">
+        <Card variant="glass" className="space-y-3 animate-in">
           <h3 className="text-sm font-bold text-foreground">프로필 설정</h3>
           <div className="flex flex-wrap gap-2">
             {AVATAR_EMOJIS.map(e => (
@@ -123,8 +123,8 @@ export default function GroupDashboardPage() {
                 key={e}
                 onClick={() => setProfileEmoji(e)}
                 className={cn(
-                  'w-10 h-10 rounded-xl text-xl flex items-center justify-center border transition-colors',
-                  profileEmoji === e ? 'border-accent bg-accent/20' : 'border-card-border'
+                  'w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all',
+                  profileEmoji === e ? 'bg-accent/15 ring-1 ring-accent/30' : 'hover:bg-card-bg'
                 )}
               >
                 {e}
@@ -137,31 +137,31 @@ export default function GroupDashboardPage() {
             onChange={e => setProfileName(e.target.value)}
             maxLength={10}
             placeholder="법명 또는 별명"
-            className="w-full px-3 py-2.5 bg-background border border-card-border rounded-xl text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent"
+            className="w-full px-4 py-3 glass rounded-xl text-sm text-foreground placeholder:text-muted/40 focus:outline-none focus:border-accent/30"
           />
-          <Button size="sm" className="w-full" onClick={handleSaveProfile}>저장</Button>
+          <Button variant="gradient" size="sm" className="w-full" onClick={handleSaveProfile}>저장</Button>
         </Card>
       )}
 
       {/* 그룹 정보 */}
-      <Card className="space-y-3">
-        <h2 className="text-lg font-bold text-foreground">{group.name}</h2>
+      <Card variant="glass" className="space-y-3 animate-in stagger-1">
+        <h2 className="text-lg font-bold gradient-text">{group.name}</h2>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted">초대코드:</span>
+          <span className="text-xs text-muted/50">초대코드:</span>
           <span className="font-mono text-sm text-accent tracking-wider">{group.invite_code}</span>
-          <button onClick={handleCopy} className="text-muted hover:text-foreground">
+          <button onClick={handleCopy} className="text-muted/40 hover:text-foreground transition-colors">
             <Copy size={14} />
           </button>
-          <button onClick={handleShare} className="text-muted hover:text-foreground">
+          <button onClick={handleShare} className="text-muted/40 hover:text-foreground transition-colors">
             <Share2 size={14} />
           </button>
-          {copied && <span className="text-[11px] text-success">복사됨!</span>}
+          {copied && <span className="text-[11px] text-success font-medium">복사됨!</span>}
         </div>
       </Card>
 
       {/* 멤버 리스트 */}
-      <div className="space-y-3">
-        <h2 className="text-sm font-medium text-muted uppercase tracking-wider">
+      <div className="space-y-3 animate-in stagger-2">
+        <h2 className="text-xs font-semibold text-muted uppercase tracking-widest px-1">
           오늘의 수행 현황 · {members.length}명
         </h2>
         {members.map(m => {
@@ -169,14 +169,14 @@ export default function GroupDashboardPage() {
           const isMe = m.user_id === user?.id
 
           return (
-            <Card key={m.user_id} className={cn(isMe && 'border-accent/30')}>
+            <Card key={m.user_id} variant="glass" className={cn(isMe && 'ring-1 ring-accent/20')}>
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{m.avatar_emoji}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-foreground text-sm truncate">
                       {m.display_name}
-                      {isMe && <span className="text-xs text-muted ml-1">(나)</span>}
+                      {isMe && <span className="text-xs text-muted/40 ml-1">(나)</span>}
                     </span>
                     {m.streak > 0 && (
                       <span className="flex items-center gap-0.5 text-[11px] text-accent">
@@ -186,16 +186,10 @@ export default function GroupDashboardPage() {
                     )}
                   </div>
                   <div className="flex items-center gap-2.5 mt-1.5">
-                    <span className={cn('text-lg', m.today_bae108 ? 'opacity-100' : 'opacity-25')}>
-                      <Hand size={16} className={m.today_bae108 ? 'text-success' : 'text-muted'} />
-                    </span>
-                    <span className={cn('text-lg', m.today_meditation ? 'opacity-100' : 'opacity-25')}>
-                      <Timer size={16} className={m.today_meditation ? 'text-success' : 'text-muted'} />
-                    </span>
-                    <span className={cn('text-lg', m.today_yeobul ? 'opacity-100' : 'opacity-25')}>
-                      <BookOpen size={16} className={m.today_yeobul ? 'text-success' : 'text-muted'} />
-                    </span>
-                    <span className="text-xs text-muted ml-1">{completedCount}/3</span>
+                    <Hand size={15} className={m.today_bae108 ? 'text-success' : 'text-muted/20'} />
+                    <Timer size={15} className={m.today_meditation ? 'text-success' : 'text-muted/20'} />
+                    <BookOpen size={15} className={m.today_yeobul ? 'text-success' : 'text-muted/20'} />
+                    <span className="text-xs text-muted/40 ml-1">{completedCount}/3</span>
                   </div>
                 </div>
                 {!isMe && (
@@ -204,7 +198,7 @@ export default function GroupDashboardPage() {
                     disabled={m.has_reacted || reactingTo === m.user_id}
                     className={cn(
                       'flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all',
-                      m.has_reacted ? 'opacity-50' : 'hover:bg-accent/10 active:scale-95'
+                      m.has_reacted ? 'opacity-30' : 'hover:bg-accent/10 active:scale-95'
                     )}
                   >
                     <span className="text-xl">🙏</span>
@@ -222,7 +216,7 @@ export default function GroupDashboardPage() {
       {/* 그룹 탈퇴 */}
       <button
         onClick={handleLeave}
-        className="flex items-center gap-1.5 mx-auto text-sm text-danger hover:opacity-80 py-4"
+        className="flex items-center gap-1.5 mx-auto text-sm text-danger/60 hover:text-danger transition-colors py-4"
       >
         <LogOut size={14} />
         {group.owner_id === user?.id ? '그룹 삭제' : '그룹 탈퇴'}

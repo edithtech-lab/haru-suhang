@@ -13,13 +13,15 @@ export default function MeditationPage() {
   }, [user])
 
   return (
-    <div className="px-4 py-6 space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground">명상</h1>
-        <p className="text-sm text-muted mt-1">고요히 앉아 호흡에 집중하세요</p>
+    <div className="px-5 py-8 space-y-6">
+      <div className="text-center animate-in">
+        <h1 className="text-2xl font-bold">
+          <span className="gradient-text">명상</span>
+        </h1>
+        <p className="text-sm text-muted mt-1.5">고요히 앉아 호흡에 집중하세요</p>
       </div>
 
-      <div className="flex justify-center py-4">
+      <div className="flex justify-center py-4 animate-in stagger-1">
         <MeditationTimer onComplete={handleComplete} />
       </div>
     </div>

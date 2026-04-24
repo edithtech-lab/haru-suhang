@@ -49,23 +49,23 @@ export function StreakCalendar() {
 
   return (
     <div className="w-full max-w-sm mx-auto">
-      {/* 월 네비게이션 */}
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="p-2 text-muted hover:text-foreground">
+      {/* 월 네비 */}
+      <div className="flex items-center justify-between mb-5">
+        <button onClick={prevMonth} className="p-2 text-muted/40 hover:text-foreground transition-colors rounded-xl hover:bg-card-bg">
           <ChevronLeft size={20} />
         </button>
         <h3 className="text-lg font-bold text-foreground">
-          {year}년 {month}���
+          {year}년 {month}월
         </h3>
-        <button onClick={nextMonth} className="p-2 text-muted hover:text-foreground">
+        <button onClick={nextMonth} className="p-2 text-muted/40 hover:text-foreground transition-colors rounded-xl hover:bg-card-bg">
           <ChevronRight size={20} />
         </button>
       </div>
 
       {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 gap-1 mb-1">
+      <div className="grid grid-cols-7 gap-1 mb-2">
         {WEEKDAYS.map(d => (
-          <div key={d} className="text-center text-xs text-muted py-1">{d}</div>
+          <div key={d} className="text-center text-[11px] text-muted/40 font-medium py-1">{d}</div>
         ))}
       </div>
 
@@ -87,16 +87,15 @@ export function StreakCalendar() {
               key={day}
               onClick={() => setSelectedDate(dateStr === selectedDate ? null : dateStr)}
               className={cn(
-                'aspect-square flex flex-col items-center justify-center rounded-lg text-sm relative cursor-pointer transition-colors',
-                isToday && 'ring-1 ring-accent',
-                isSelected && 'bg-accent/20',
+                'aspect-square flex flex-col items-center justify-center rounded-xl text-sm relative cursor-pointer transition-all',
+                isToday && 'ring-1 ring-accent/50',
+                isSelected && 'glass',
                 dayLogs.length > 0 && !isSelected && 'bg-card-bg',
-                holiday && 'border border-danger/30'
               )}
             >
               <span className={cn(
                 'text-xs',
-                holiday ? 'text-danger font-medium' : dayLogs.length > 0 ? 'text-foreground font-medium' : 'text-muted'
+                holiday ? 'text-danger font-medium' : dayLogs.length > 0 ? 'text-foreground font-medium' : 'text-muted/40'
               )}>
                 {day}
               </span>
@@ -111,28 +110,28 @@ export function StreakCalendar() {
                 </div>
               )}
               {holiday && !dayLogs.length && (
-                <div className="w-1.5 h-1.5 rounded-full bg-danger/50 mt-0.5" />
+                <div className="w-1.5 h-1.5 rounded-full bg-danger/40 mt-0.5" />
               )}
             </div>
           )
         })}
       </div>
 
-      {/* 선택된 날짜 정보 */}
+      {/* 선택된 날짜 */}
       {selectedDate && (selectedHoliday || selectedLogs.length > 0) && (
-        <div className="mt-4 p-3 bg-card-bg rounded-xl border border-card-border">
-          <p className="text-xs text-muted mb-1">{selectedDate}</p>
+        <div className="mt-4 glass rounded-xl p-4">
+          <p className="text-xs text-muted/40 mb-1.5">{selectedDate}</p>
           {selectedHoliday && (
             <div className="mb-2">
               <p className="text-sm font-bold text-danger">{selectedHoliday.name}</p>
-              <p className="text-xs text-muted">{selectedHoliday.description}</p>
+              <p className="text-xs text-muted/60">{selectedHoliday.description}</p>
             </div>
           )}
           {selectedLogs.length > 0 && (
             <div className="flex gap-2">
               {selectedLogs.map(type => (
-                <span key={type} className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
-                  {type === 'bae108' ? '108배' : type === 'meditation' ? '명상' : '예불'}
+                <span key={type} className="text-xs bg-accent/10 text-accent px-2.5 py-1 rounded-full font-medium">
+                  {type === 'bae108' ? '108배' : type === 'meditation' ? '명상' : '염불'}
                 </span>
               ))}
             </div>
@@ -141,22 +140,18 @@ export function StreakCalendar() {
       )}
 
       {/* 범례 */}
-      <div className="flex flex-wrap justify-center gap-3 mt-4 text-xs text-muted">
-        <div className="flex items-center gap-1">
+      <div className="flex flex-wrap justify-center gap-4 mt-5 text-xs text-muted/40">
+        <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-accent" />
           <span>108배</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-blue-400" />
           <span>명상</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-success" />
-          <span>예불</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-danger/50" />
-          <span>기념일</span>
+          <span>염불</span>
         </div>
       </div>
     </div>

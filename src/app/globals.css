@@ -1,50 +1,204 @@
 @import "tailwindcss";
 
+/* ===== v2 Design Tokens — Open 톤 기반 ===== */
 :root {
-  --background: #1a1410;
-  --foreground: #f5e6d3;
+  /* Base */
+  --background: #0e0b08;
+  --foreground: #f2ece3;
+  --foreground-dim: #c8bdae;
+  --muted: #7a6e5f;
+  --muted-deep: #4a4037;
+
+  /* Accent */
   --accent: #d4a574;
-  --accent-light: #f0d9b5;
-  --card-bg: rgba(212, 165, 116, 0.08);
-  --card-border: rgba(212, 165, 116, 0.2);
-  --success: #8fbc8f;
-  --muted: #8b7355;
-  --danger: #c75050;
+  --accent-light: #e8cfa8;
+  --accent-deep: #9c7a52;
+  --accent-glow: rgba(212, 165, 116, 0.15);
+
+  /* Semantic */
+  --success: #8fb88d;
+  --danger: #c97166;
+
+  /* Surface */
+  --surface: rgba(255, 248, 238, 0.03);
+  --surface-border: rgba(242, 236, 227, 0.06);
+  --surface-hover: rgba(255, 248, 238, 0.05);
+  --surface-strong: rgba(255, 248, 238, 0.06);
+  --surface-strong-border: rgba(242, 236, 227, 0.1);
+
+  /* Gradients */
+  --gradient-orb-amber: radial-gradient(circle at center, rgba(212, 165, 116, 0.35) 0%, transparent 70%);
+  --gradient-orb-peach: radial-gradient(circle at center, rgba(232, 168, 138, 0.28) 0%, transparent 70%);
+  --gradient-orb-cream: radial-gradient(circle at center, rgba(232, 207, 168, 0.22) 0%, transparent 70%);
+  --gradient-orb-deep: radial-gradient(circle at center, rgba(107, 78, 58, 0.4) 0%, transparent 70%);
+  --gradient-paper: linear-gradient(180deg, rgba(242, 236, 227, 0.02), transparent);
+
+  /* Typography */
+  --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif-kr), 'Noto Serif KR', 'Noto Serif', Georgia, serif;
+
+  /* Motion */
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-breath: cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-foreground-dim: var(--foreground-dim);
+  --color-muted: var(--muted);
+  --color-muted-deep: var(--muted-deep);
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
-  --color-card-bg: var(--card-bg);
-  --color-card-border: var(--card-border);
+  --color-accent-deep: var(--accent-deep);
   --color-success: var(--success);
-  --color-muted: var(--muted);
   --color-danger: var(--danger);
+  --color-surface: var(--surface);
+  --color-surface-border: var(--surface-border);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-strong-border: var(--surface-strong-border);
+
+  /* 기존 호환 (마이그레이션 기간) */
+  --color-card-bg: var(--surface);
+  --color-card-border: var(--surface-border);
+  --color-glass-bg: var(--surface-strong);
+  --color-glass-border: var(--surface-strong-border);
+
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 스크롤바 스타일 */
-::-webkit-scrollbar {
-  width: 4px;
+.font-serif {
+  font-family: var(--font-serif);
+  font-feature-settings: 'ss01', 'kern';
 }
-::-webkit-scrollbar-track {
+
+/* ===== 스크롤바 (subtle) ===== */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212, 165, 116, 0.15); border-radius: 2px; }
+
+/* ===== Surface (카드 대체) ===== */
+.surface-subtle {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+}
+.surface-paper {
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-strong-border);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+}
+.surface-ghost {
   background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--muted);
-  border-radius: 2px;
+  border: 1px solid var(--surface-border);
 }
 
-/* 호흡 가이드 애니메이션 */
+/* ===== 글래스 (wisdom 챗봇 등 기존 호환) ===== */
+.glass {
+  background: var(--surface-strong);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  border: 1px solid var(--surface-strong-border);
+}
+
+/* ===== 텍스트 포인트 ===== */
+.text-accent-glow {
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-deep) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Card hover / press ===== */
+.card-hover {
+  transition: transform 0.3s var(--ease-soft), background 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+}
+.card-hover:active {
+  transform: scale(0.98);
+}
+
+.card-elevated {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Gradient border (Card variant='gradient'에서 사용) ===== */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.3), rgba(212, 165, 116, 0.05), rgba(212, 165, 116, 0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ===== 엔트리 애니메이션 ===== */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fade-up 0.8s var(--ease-soft) both;
+}
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.2s; }
+.stagger-4 { animation-delay: 0.3s; }
+.stagger-5 { animation-delay: 0.4s; }
+.stagger-6 { animation-delay: 0.5s; }
+
+/* ===== Ambient orb drift (배경 오브) ===== */
+@keyframes orb-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, -3%) scale(1.05); }
+  66% { transform: translate(-3%, 4%) scale(0.95); }
+}
+@keyframes orb-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-4%, 3%) scale(1.08); }
+  66% { transform: translate(3%, -5%) scale(0.92); }
+}
+@keyframes orb-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3%, 3%) scale(1.1); }
+}
+
+.orb-drift-1 { animation: orb-drift-1 24s ease-in-out infinite; }
+.orb-drift-2 { animation: orb-drift-2 30s ease-in-out infinite; }
+.orb-drift-3 { animation: orb-drift-3 36s ease-in-out infinite; }
+
+/* ===== 호흡 ===== */
+@keyframes breathe {
+  0%, 100% { transform: scale(0.85); opacity: 0.6; }
+  50% { transform: scale(1); opacity: 1; }
+}
+.breathe { animation: breathe 8s var(--ease-breath) infinite; }
+
 @keyframes breathe-in {
   0% { transform: scale(0.6); opacity: 0.4; }
   100% { transform: scale(1); opacity: 0.8; }
@@ -53,44 +207,22 @@ body {
   0% { transform: scale(1); opacity: 0.8; }
   100% { transform: scale(0.6); opacity: 0.4; }
 }
+.breathe-in { animation: breathe-in 4s ease-in-out forwards; }
+.breathe-out { animation: breathe-out 4s ease-in-out forwards; }
 
-.breathe-in {
-  animation: breathe-in 4s ease-in-out forwards;
-}
-.breathe-out {
-  animation: breathe-out 4s ease-in-out forwards;
-}
-
-/* 108배 완료 축하 */
+/* ===== 108배 축하 ===== */
 @keyframes celebration {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
-.celebrate {
-  animation: celebration 0.6s ease-in-out 3;
-}
+.celebrate { animation: celebration 0.5s ease-in-out 3; }
 
-/* 카드 hover */
-.card-hover {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.card-hover:active {
-  transform: scale(0.98);
-}
+/* ===== 채팅 ===== */
+.chat-bubble { word-break: break-word; }
+.chat-bubble-user { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; }
+.chat-bubble-assistant { border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; }
 
-/* 채팅 버블 */
-.chat-bubble {
-  word-break: break-word;
-}
-.chat-bubble-user {
-  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
-}
-.chat-bubble-assistant {
-  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-}
-
-/* 타이핑 애니메이션 */
 @keyframes typing-dot {
   0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-4px); }
@@ -102,4 +234,53 @@ body {
   border-radius: 50%;
   background: var(--accent);
   animation: typing-dot 1.2s ease-in-out infinite;
+}
+
+/* ===== 글로우 펄스 ===== */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 24px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px rgba(212, 165, 116, 0.25); }
+}
+.glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+
+/* ===== Shimmer (에디토리얼 텍스트 포인트) ===== */
+@keyframes shimmer {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.shimmer { animation: shimmer 4s ease-in-out infinite; }
+
+/* ===== Divider (잡지 스타일) ===== */
+.divider-serif {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--muted);
+}
+.divider-serif::before,
+.divider-serif::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--surface-border);
+}
+
+/* ===== 스크롤바 숨기기 ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ===== Safe area ===== */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== Reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  .orb-drift-1, .orb-drift-2, .orb-drift-3,
+  .breathe, .shimmer, .glow-pulse {
+    animation: none;
+  }
 }
