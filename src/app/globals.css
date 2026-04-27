@@ -39,6 +39,53 @@
   /* Hero overlay (이미지 위 텍스트용) */
   --hero-gradient: linear-gradient(180deg, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.8) 100%);
 
+  /* ===== Mood Backdrops — Open 시네마틱 lighting 차용 =====
+     매우 미묘한 채도(0.12~0.22)로 깊이감만 부여.
+     각 페이지의 정체성을 색조로 구분. */
+  --mood-warm-dusk:
+    radial-gradient(ellipse 80% 60% at 75% 15%, rgba(232, 118, 58, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 25% 90%, rgba(120, 50, 30, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(60, 30, 20, 0.08) 0%, transparent 70%);
+
+  --mood-wine:
+    radial-gradient(ellipse 75% 55% at 50% 25%, rgba(140, 40, 55, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 90%, rgba(80, 25, 40, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 15% 70%, rgba(60, 20, 30, 0.1) 0%, transparent 60%);
+
+  --mood-indigo:
+    radial-gradient(ellipse 80% 55% at 70% 20%, rgba(70, 80, 140, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 50% at 20% 85%, rgba(40, 50, 90, 0.13) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(30, 35, 60, 0.08) 0%, transparent 65%);
+
+  --mood-olive:
+    radial-gradient(ellipse 80% 55% at 65% 80%, rgba(120, 130, 70, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 25% 20%, rgba(80, 90, 50, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(50, 55, 30, 0.08) 0%, transparent 65%);
+
+  --mood-sepia:
+    radial-gradient(ellipse 75% 55% at 30% 25%, rgba(180, 140, 90, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(120, 90, 50, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(80, 60, 40, 0.07) 0%, transparent 65%);
+
+  --mood-amber:
+    radial-gradient(ellipse 80% 55% at 70% 25%, rgba(218, 145, 80, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 20% 85%, rgba(160, 100, 50, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(110, 70, 35, 0.08) 0%, transparent 65%);
+
+  --mood-navy:
+    radial-gradient(ellipse 75% 55% at 50% 30%, rgba(50, 70, 110, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 90%, rgba(30, 45, 80, 0.13) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 35% at 15% 70%, rgba(25, 35, 60, 0.1) 0%, transparent 60%);
+
+  --mood-violet:
+    radial-gradient(ellipse 75% 55% at 70% 20%, rgba(110, 75, 140, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 25% 85%, rgba(80, 55, 110, 0.11) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 50% 50%, rgba(50, 35, 70, 0.08) 0%, transparent 65%);
+
+  --mood-charcoal:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(70, 70, 75, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 85%, rgba(45, 45, 50, 0.1) 0%, transparent 50%);
+
   /* Typography */
   --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-serif: var(--font-noto-serif-kr), 'Noto Serif KR', Georgia, serif;

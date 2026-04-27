@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import { MeditationTimer } from '@/components/meditation-timer'
 import { useAuth } from '@/lib/auth-context'
 import { savePractice } from '@/lib/practice-store'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 
 export default function MeditationPage() {
   const { user } = useAuth()
@@ -14,6 +15,7 @@ export default function MeditationPage() {
 
   return (
     <div className="px-5 py-8 space-y-6">
+      <MoodBackdrop mood="indigo" />
       <div className="text-center animate-in">
         <h1 className="text-2xl font-bold">
           <span className="gradient-text">명상</span>

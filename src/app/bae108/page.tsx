@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth-context'
 import { savePractice } from '@/lib/practice-store'
 import { BAE_TARGET } from '@/lib/constants'
 import { RotateCcw } from 'lucide-react'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 
 export default function Bae108Page() {
   const { user } = useAuth()
@@ -45,6 +46,7 @@ export default function Bae108Page() {
 
   return (
     <div className="px-5 py-8 space-y-6">
+      <MoodBackdrop mood="wine" />
       <div className="text-center animate-in">
         <h1 className="text-2xl font-bold">
           <span className="gradient-text">108배</span>

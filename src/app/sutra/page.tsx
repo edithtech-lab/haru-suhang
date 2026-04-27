@@ -6,6 +6,7 @@ import { SUTRAS } from '@/lib/sutras'
 import type { Sutra } from '@/lib/sutras'
 import { cn } from '@/lib/utils'
 import { Sparkles, ChevronLeft, BookOpen, Languages } from 'lucide-react'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 
 export default function SutraPage() {
   const [selected, setSelected] = useState<Sutra | null>(null)
@@ -34,6 +35,7 @@ export default function SutraPage() {
   if (!selected) {
     return (
       <div className="px-5 py-8 space-y-6">
+        <MoodBackdrop mood="sepia" />
         <div className="text-center animate-in">
           <h1 className="text-2xl font-bold">
             <span className="gradient-text">경전</span>
@@ -69,6 +71,7 @@ export default function SutraPage() {
 
   return (
     <div className="px-5 py-8 space-y-4">
+      <MoodBackdrop mood="sepia" />
       <div className="flex items-center gap-3 animate-in">
         <button
           onClick={() => { setSelected(null); setCommentary({}) }}

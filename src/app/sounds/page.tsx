@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Pause, Play } from 'lucide-react'
 import { AMBIENT_SOUNDS, AmbientSoundDef } from '@/components/ambient-sounds'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 import { cn } from '@/lib/utils'
 
 type ActiveSound = {
@@ -141,6 +142,7 @@ export default function SoundsPage() {
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] flex flex-col pb-8">
+      <MoodBackdrop mood="navy" />
       {/* 헤더 */}
       <header className="flex items-center justify-between px-5 pt-5 pb-6">
         <Link

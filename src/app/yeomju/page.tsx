@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth-context'
 import { savePractice } from '@/lib/practice-store'
 import { cn } from '@/lib/utils'
 import { RotateCcw, Check } from 'lucide-react'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 
 type Mode = 'yeomju' | 'dokgyeong'
 type SutraKey = keyof typeof YEOBUL_SUTRAS
@@ -56,6 +57,7 @@ export default function YeomjuPage() {
 
   return (
     <div className="px-5 py-8 space-y-6">
+      <MoodBackdrop mood="olive" />
       <div className="text-center animate-in">
         <h1 className="text-2xl font-bold">
           <span className="gradient-text">염불</span>

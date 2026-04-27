@@ -8,6 +8,7 @@ import { getRecentMessages, saveMessage, clearChatHistory } from '@/lib/chat-sto
 import { DAILY_WISDOMS } from '@/lib/constants'
 import { Send, Trash2, LogIn, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 import type { ChatMessage } from '@/types'
 
 const SUGGESTED_QUESTIONS = [
@@ -186,6 +187,7 @@ export default function WisdomPage() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-5rem)]">
+      <MoodBackdrop mood="amber" />
       {/* 헤더 */}
       <div className="px-5 pt-8 pb-4 text-center shrink-0">
         <h1 className="text-2xl font-bold">

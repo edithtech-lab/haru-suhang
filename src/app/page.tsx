@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context'
 import { getTodayStatus, getPracticeStats } from '@/lib/practice-store'
 import { DAILY_WISDOMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 import type { DailyStatus, PracticeStats } from '@/types'
 
 const PRACTICES = [
@@ -47,6 +48,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
+      <MoodBackdrop mood="warm-dusk" />
       {/* ===== 상단 헤더 ===== */}
       <header className="animate-in flex items-center justify-between px-5 pt-5 pb-4">
         <div className="flex items-center gap-2.5">
@@ -87,31 +89,68 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ===== 히어로 — Open 스타일 풀블리드 영역 ===== */}
+      {/* ===== 히어로 — Open 시네마틱 lighting ===== */}
       <section className="animate-in stagger-1 px-5 mb-8">
-        <div className="relative rounded-2xl overflow-hidden aspect-[3/4] bg-[#0a0a0a]">
-          {/* 이미지 placeholder — 나중에 <Image />로 교체 */}
+        <div className="relative rounded-2xl overflow-hidden aspect-[3/4] bg-black">
+          {/* 다층 시네마틱 lighting */}
           <div className="absolute inset-0">
-            {/* 다층 그라데이션으로 풍부한 배경 연출 */}
+            {/* 메인 다층 그라데이션 — 위쪽에서 빛 들어오고, 하단 깊은 어둠 */}
             <div
               className="absolute inset-0"
               style={{
                 background: allDone
-                  ? 'radial-gradient(ellipse at 30% 30%, rgba(143, 184, 141, 0.35) 0%, rgba(10, 10, 10, 0.95) 60%), linear-gradient(180deg, #0a0a0a 0%, #000 100%)'
-                  : 'radial-gradient(ellipse at 30% 20%, rgba(232, 118, 58, 0.4) 0%, rgba(10, 10, 10, 0.95) 55%), linear-gradient(180deg, #0a0a0a 0%, #000 100%)',
+                  ? `
+                    radial-gradient(ellipse 75% 55% at 55% 20%, rgba(143, 184, 141, 0.3) 0%, transparent 55%),
+                    radial-gradient(ellipse 100% 80% at 50% 110%, rgba(40, 60, 40, 0.5) 0%, transparent 60%),
+                    linear-gradient(180deg, #050706 0%, #000 60%)
+                  `
+                  : `
+                    radial-gradient(ellipse 75% 55% at 55% 20%, rgba(232, 118, 58, 0.28) 0%, transparent 55%),
+                    radial-gradient(ellipse 100% 80% at 50% 110%, rgba(60, 25, 12, 0.55) 0%, transparent 60%),
+                    linear-gradient(180deg, #0a0604 0%, #000 60%)
+                  `,
               }}
             />
+
+            {/* 측면 light spill (한 쪽에서 빛 들어오는 느낌) */}
             <div
-              className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full orb-pulse"
+              className="absolute inset-0"
+              style={{
+                background: allDone
+                  ? 'radial-gradient(ellipse 35% 60% at 95% 35%, rgba(143, 184, 141, 0.16) 0%, transparent 55%)'
+                  : 'radial-gradient(ellipse 35% 60% at 95% 35%, rgba(232, 168, 100, 0.18) 0%, transparent 55%)',
+              }}
+            />
+
+            {/* 메인 오브 — 더 크고 부드럽게 */}
+            <div
+              className="absolute -top-24 -right-32 w-[26rem] h-[26rem] rounded-full orb-pulse"
               style={{
                 background: allDone ? 'var(--orb-peaceful)' : 'var(--orb-warm)',
-                opacity: 0.65,
-                filter: 'blur(20px)',
+                opacity: 0.5,
+                filter: 'blur(50px)',
+              }}
+            />
+
+            {/* 비네트 — 가장자리 더 어둡게 */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.65) 100%)',
+              }}
+            />
+
+            {/* 그레인 노이즈 — 필름 질감 */}
+            <div
+              className="absolute inset-0 opacity-[0.07] mix-blend-overlay"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
               }}
             />
           </div>
 
-          {/* 하단 오버레이 */}
+          {/* 하단 텍스트용 오버레이 */}
           <div className="absolute inset-0 hero-overlay" />
 
           {/* 콘텐츠 오버레이 */}

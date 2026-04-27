@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Send, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 
 type JournalEntry = {
   id: string
@@ -150,6 +151,7 @@ export default function JournalPage() {
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] flex flex-col pb-8">
+      <MoodBackdrop mood="violet" />
       {/* 헤더 */}
       <header className="flex items-center justify-between px-5 pt-5 pb-6">
         <Link
