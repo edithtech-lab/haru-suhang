@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Play, Search, Check, LogIn, LogOut } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
@@ -45,6 +46,7 @@ export default function HomePage() {
   const nextPractice = PRACTICES.find((p) => !status[p.key])
   const allDone = !nextPractice
   const completedCount = [status.bae108, status.meditation, status.yeobul].filter(Boolean).length
+  const [heroImageReady, setHeroImageReady] = useState(false)
 
   return (
     <div className="flex flex-col">
@@ -89,12 +91,11 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ===== 히어로 — Open 시네마틱 lighting ===== */}
+      {/* ===== 히어로 — Open 시네마틱 lighting + 실사 이미지 ===== */}
       <section className="animate-in stagger-1 px-5 mb-8">
         <div className="relative rounded-2xl overflow-hidden aspect-[3/4] bg-black">
-          {/* 다층 시네마틱 lighting */}
+          {/* 1. 폴백 그라데이션 — 이미지 없거나 로드 전에 보임 */}
           <div className="absolute inset-0">
-            {/* 메인 다층 그라데이션 — 위쪽에서 빛 들어오고, 하단 깊은 어둠 */}
             <div
               className="absolute inset-0"
               style={{
@@ -111,8 +112,6 @@ export default function HomePage() {
                   `,
               }}
             />
-
-            {/* 측면 light spill (한 쪽에서 빛 들어오는 느낌) */}
             <div
               className="absolute inset-0"
               style={{
@@ -121,8 +120,6 @@ export default function HomePage() {
                   : 'radial-gradient(ellipse 35% 60% at 95% 35%, rgba(232, 168, 100, 0.18) 0%, transparent 55%)',
               }}
             />
-
-            {/* 메인 오브 — 더 크고 부드럽게 */}
             <div
               className="absolute -top-24 -right-32 w-[26rem] h-[26rem] rounded-full orb-pulse"
               style={{
@@ -131,26 +128,38 @@ export default function HomePage() {
                 filter: 'blur(50px)',
               }}
             />
-
-            {/* 비네트 — 가장자리 더 어둡게 */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.65) 100%)',
-              }}
-            />
-
-            {/* 그레인 노이즈 — 필름 질감 */}
-            <div
-              className="absolute inset-0 opacity-[0.07] mix-blend-overlay"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
-              }}
-            />
           </div>
 
-          {/* 하단 텍스트용 오버레이 */}
+          {/* 2. 실사 이미지 — 있으면 그라데이션 위로 페이드인 */}
+          <Image
+            src={allDone ? '/images/hero/anjali-complete.webp' : '/images/hero/anjali.webp'}
+            alt=""
+            fill
+            priority
+            sizes="(max-width: 512px) 100vw, 512px"
+            className={`object-cover transition-opacity duration-700 ${heroImageReady ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setHeroImageReady(true)}
+            onError={() => setHeroImageReady(false)}
+          />
+
+          {/* 3. 비네트 — 가장자리 어둡게 (이미지·그라데이션 공통) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.65) 100%)',
+            }}
+          />
+
+          {/* 4. 그레인 노이즈 — 필름 질감 */}
+          <div
+            className="absolute inset-0 opacity-[0.07] mix-blend-overlay pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
+            }}
+          />
+
+          {/* 5. 하단 텍스트용 오버레이 */}
           <div className="absolute inset-0 hero-overlay" />
 
           {/* 콘텐츠 오버레이 */}
