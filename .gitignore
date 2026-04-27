@@ -42,3 +42,8 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# 생성된 raw 이미지 (webp만 commit, png는 backup으로 로컬에만)
+/public/images/hero/*.png
+/public/images/hero/*.jpg
+/public/images/hero/*.jpeg
