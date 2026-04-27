@@ -6,8 +6,9 @@ import { formatTime } from '@/lib/utils'
 import { MEDITATION_TIMES } from '@/lib/constants'
 import { getSoundGenerator } from '@/components/audio-player'
 import { AMBIENT_SOUNDS } from '@/components/ambient-sounds'
-import { Play, Pause, X, Check } from 'lucide-react'
+import { Play, Pause } from 'lucide-react'
 import { Mandala } from '@/components/mandala'
+import { BottomSheet, OptionRow } from '@/components/bottom-sheet'
 
 interface MeditationTimerProps {
   onComplete: (durationSec: number) => void
@@ -335,67 +336,3 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
   )
 }
 
-// ===== Bottom Sheet 모달 =====
-function BottomSheet({
-  title,
-  children,
-  onClose,
-}: {
-  title: string
-  children: React.ReactNode
-  onClose: () => void
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose}>
-      <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        aria-hidden
-      />
-      <div
-        className="relative w-full max-w-lg bg-black border-t border-[var(--surface-border)] rounded-t-3xl pb-8 max-h-[70vh] overflow-y-auto animate-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 핸들 */}
-        <div className="flex items-center justify-between px-5 pt-3">
-          <div className="flex-1" />
-          <p className="text-foreground text-[16px] tracking-tight">{title}</p>
-          <button
-            onClick={onClose}
-            aria-label="닫기"
-            className="flex-1 flex justify-end p-2 text-foreground-dim hover:text-foreground transition-colors"
-          >
-            <X size={18} strokeWidth={1.5} />
-          </button>
-        </div>
-        <div className="mt-4 px-5">{children}</div>
-      </div>
-    </div>
-  )
-}
-
-function OptionRow({
-  label,
-  description,
-  selected,
-  onClick,
-}: {
-  label: string
-  description?: string
-  selected: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center justify-between py-4 border-b border-[var(--surface-border)] hover:bg-[var(--surface-hover)] -mx-5 px-5 transition-colors"
-    >
-      <div className="text-left">
-        <p className="text-foreground text-[15px] tracking-tight">{label}</p>
-        {description && (
-          <p className="label-tag mt-0.5">{description}</p>
-        )}
-      </div>
-      {selected && <Check size={16} className="text-foreground" strokeWidth={1.8} />}
-    </button>
-  )
-}
