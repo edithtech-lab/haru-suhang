@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Link from 'next/link'
 import { Send, Trash2, LogIn } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import { getRecentMessages, saveMessage, clearChatHistory } from '@/lib/chat-store'
@@ -32,7 +33,7 @@ function incrementGuestCount(): number {
 }
 
 export default function WisdomPage() {
-  const { user, loading: authLoading, signInWithGoogle } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -290,13 +291,13 @@ export default function WisdomPage() {
             <p className="text-foreground-dim text-[13px]">
               계속 대화하려면 로그인이 필요합니다
             </p>
-            <button
-              onClick={signInWithGoogle}
+            <Link
+              href="/auth"
               className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-background rounded-full text-[12px] tracking-wide active:scale-95 transition-transform"
             >
               <LogIn size={12} />
               로그인
-            </button>
+            </Link>
           </div>
         </div>
       )}

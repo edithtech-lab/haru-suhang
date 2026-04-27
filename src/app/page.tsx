@@ -25,7 +25,7 @@ function getGreeting(): string {
 }
 
 export default function HomePage() {
-  const { user, loading, signInWithGoogle, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const [status, setStatus] = useState<DailyStatus>({ bae108: false, meditation: false, yeobul: false })
   const [stats, setStats] = useState<PracticeStats>({ streak: 0, totalDays: 0, totalBae108: 0, totalMeditation: 0, totalYeobul: 0 })
 
@@ -77,13 +77,13 @@ export default function HomePage() {
                 <LogOut size={16} strokeWidth={1.5} />
               </button>
             ) : (
-              <button
-                onClick={signInWithGoogle}
+              <Link
+                href="/auth"
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] text-accent border border-[var(--accent-glow)] rounded-full hover:bg-[var(--accent-glow)] transition-colors uppercase tracking-[0.18em]"
               >
                 <LogIn size={11} />
                 Sign in
-              </button>
+              </Link>
             )
           )}
         </div>

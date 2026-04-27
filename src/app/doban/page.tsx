@@ -22,7 +22,7 @@ const ORB_GRADIENTS = [
 ]
 
 export default function DobanPage() {
-  const { user, loading, signInWithGoogle } = useAuth()
+  const { user, loading } = useAuth()
   const [groups, setGroups] = useState<GroupWithStats[]>([])
   const [challenges, setChallenges] = useState<ChallengeWithProgress[]>([])
   const [fetching, setFetching] = useState(true)
@@ -103,10 +103,13 @@ export default function DobanPage() {
       {!loading && !user && (
         <div className="animate-in stagger-1 surface-paper rounded-2xl p-5 flex items-center justify-between gap-4">
           <p className="text-foreground-dim text-sm">로그인하면 도반 그룹과 챌린지에 참여할 수 있어요</p>
-          <Button variant="primary" size="sm" onClick={signInWithGoogle} className="shrink-0">
+          <Link
+            href="/auth"
+            className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-background rounded-full text-[12px] tracking-wide active:scale-95 transition-transform"
+          >
             <LogIn size={14} />
             로그인
-          </Button>
+          </Link>
         </div>
       )}
 
