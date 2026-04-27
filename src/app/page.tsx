@@ -155,12 +155,17 @@ export default function HomePage() {
 
           {/* 콘텐츠 오버레이 */}
           <div className="relative h-full flex flex-col justify-between p-6">
-            {/* 상단 라벨 */}
-            <div className="flex items-center justify-between">
-              <p className="label-upper">Today</p>
+            {/* 상단 라벨 (Open #4 차용) */}
+            <div className="flex items-start justify-between">
               <p className="label-upper">
-                {new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' })}
+                Daily Practice · {new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short' })}
               </p>
+              <span className={cn(
+                'label-tag tracking-[0.25em]',
+                allDone ? 'text-success' : 'text-foreground-dim',
+              )}>
+                {completedCount}/3
+              </span>
             </div>
 
             {/* 하단 타이틀 + CTA */}
@@ -168,25 +173,25 @@ export default function HomePage() {
               <div className="flex-1 min-w-0">
                 {allDone ? (
                   <>
-                    <p className="text-foreground-dim text-sm mb-2">오늘의 수행</p>
-                    <h2 className="text-[32px] leading-[1.1] tracking-tight text-foreground font-medium">
-                      모두 완료
+                    <p className="label-tag mb-2 text-success">All complete</p>
+                    <h2 className="text-[40px] leading-[0.95] tracking-tight text-foreground font-medium">
+                      모두<br />완료
                     </h2>
-                    <p className="text-foreground-dim text-sm mt-3">
+                    <p className="text-foreground-dim text-[13px] mt-4 tracking-wide">
                       {stats.streak}일 연속 수행 중
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-foreground-dim text-sm mb-1">
-                      {nextPractice!.duration}
+                    <p className="label-tag mb-2 text-foreground-dim">
+                      {nextPractice!.english} · {nextPractice!.duration}
                     </p>
-                    <h2 className="text-[34px] leading-[1.05] tracking-tight text-foreground font-medium">
+                    <h2 className="text-[40px] leading-[0.95] tracking-tight text-foreground font-medium">
                       {nextPractice!.label}
                     </h2>
-                    <p className="text-foreground-dim text-[13px] mt-3 leading-relaxed line-clamp-2 max-w-[80%]">
-                      {todayWisdom.text.slice(0, 50)}
-                      {todayWisdom.text.length > 50 && '…'}
+                    <p className="text-foreground-dim text-[12px] mt-3 leading-relaxed line-clamp-2 max-w-[85%] italic">
+                      &ldquo;{todayWisdom.text.slice(0, 42)}
+                      {todayWisdom.text.length > 42 && '…'}&rdquo;
                     </p>
                   </>
                 )}
@@ -196,28 +201,54 @@ export default function HomePage() {
                 <Link
                   href={nextPractice!.href}
                   aria-label={`${nextPractice!.label} 시작`}
-                  className="group shrink-0 w-12 h-12 rounded-full border border-foreground/30 flex items-center justify-center hover:border-foreground hover:bg-foreground/5 transition-all active:scale-95"
+                  className="group shrink-0 w-14 h-14 rounded-full border border-foreground/30 flex items-center justify-center hover:border-foreground hover:bg-foreground/5 transition-all active:scale-95"
                 >
-                  <Play size={15} strokeWidth={1.5} className="text-foreground translate-x-[1px]" fill="currentColor" />
+                  <Play size={17} strokeWidth={1.2} className="text-foreground translate-x-[1.5px]" fill="currentColor" />
                 </Link>
               )}
             </div>
           </div>
         </div>
 
-        {/* See All 링크 */}
-        <div className="mt-4 flex items-center justify-between">
-          <p className="label-upper">
-            {allDone ? (
-              <span className="text-success">All done · {completedCount}/3</span>
-            ) : (
-              <span>Progress · {completedCount}/3</span>
-            )}
-          </p>
-          <Link href="/calendar" className="text-[12px] text-foreground-dim hover:text-foreground transition-colors">
-            See all →
+        {/* 카드 아래 카테고리 빠른 전환 (Open #4 차용) */}
+        <nav className="mt-4 flex items-center gap-5 overflow-x-auto scrollbar-hide">
+          {PRACTICES.map(p => {
+            const done = status[p.key]
+            const isNext = nextPractice?.key === p.key
+            return (
+              <Link
+                key={p.href}
+                href={p.href}
+                className={cn(
+                  'shrink-0 pb-1.5 text-[13px] tracking-tight transition-colors relative',
+                  done
+                    ? 'text-muted-deep line-through decoration-1'
+                    : isNext
+                    ? 'text-foreground'
+                    : 'text-foreground-dim hover:text-foreground',
+                )}
+              >
+                {p.label}
+                {isNext && (
+                  <div className="absolute -bottom-[1px] left-0 right-0 h-[1.5px] bg-accent" />
+                )}
+              </Link>
+            )
+          })}
+          <Link
+            href="/sounds"
+            className="shrink-0 pb-1.5 text-[13px] text-foreground-dim hover:text-foreground transition-colors tracking-tight"
+          >
+            사운드
           </Link>
-        </div>
+          <Link
+            href="/discover"
+            className="shrink-0 pb-1.5 text-[13px] text-foreground-dim hover:text-foreground transition-colors tracking-tight"
+          >
+            전체
+          </Link>
+        </nav>
+
       </section>
 
       {/* ===== 오늘의 수행 스케줄 리스트 ===== */}

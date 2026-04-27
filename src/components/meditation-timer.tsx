@@ -7,6 +7,7 @@ import { MEDITATION_TIMES } from '@/lib/constants'
 import { getSoundGenerator } from '@/components/audio-player'
 import { AMBIENT_SOUNDS } from '@/components/ambient-sounds'
 import { Play, Pause, X, Check } from 'lucide-react'
+import { Mandala } from '@/components/mandala'
 
 interface MeditationTimerProps {
   onComplete: (durationSec: number) => void
@@ -331,39 +332,6 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
         다시 시작
       </button>
     </div>
-  )
-}
-
-// ===== 만다라 SVG (Open #3 차용) =====
-function Mandala() {
-  // 5개 원이 겹친 만다라 (꽃 모양)
-  const r = 38
-  const cx = 80
-  const cy = 80
-  const angles = [0, 72, 144, 216, 288] // 5개
-
-  return (
-    <svg width="160" height="160" viewBox="0 0 160 160" className="text-foreground/70">
-      {/* 중앙 원 */}
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="currentColor" strokeWidth="0.8" />
-      {/* 5개 외곽 원 */}
-      {angles.map((a, i) => {
-        const rad = (a * Math.PI) / 180
-        const dx = Math.cos(rad - Math.PI / 2) * (r * 0.55)
-        const dy = Math.sin(rad - Math.PI / 2) * (r * 0.55)
-        return (
-          <circle
-            key={i}
-            cx={cx + dx}
-            cy={cy + dy}
-            r={r}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="0.8"
-          />
-        )
-      })}
-    </svg>
   )
 }
 
