@@ -302,6 +302,9 @@ export default function HomePage() {
           <Link href="/journal" className="text-[15px] text-foreground hover:text-accent transition-colors">
             마음기록 <span className="text-muted text-sm">→</span>
           </Link>
+          <Link href="/discover" className="text-[15px] text-foreground hover:text-accent transition-colors">
+            둘러보기 <span className="text-muted text-sm">→</span>
+          </Link>
           <Link href="/sounds" className="text-[15px] text-foreground hover:text-accent transition-colors">
             사운드 <span className="text-muted text-sm">→</span>
           </Link>
