@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Card } from '@/components/ui/card'
+import Link from 'next/link'
+import { ArrowLeft, ChevronLeft, Languages } from 'lucide-react'
 import { SUTRAS } from '@/lib/sutras'
 import type { Sutra } from '@/lib/sutras'
 import { cn } from '@/lib/utils'
-import { Sparkles, ChevronLeft, BookOpen, Languages } from 'lucide-react'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 
 export default function SutraPage() {
@@ -32,106 +32,154 @@ export default function SutraPage() {
     }
   }
 
+  // ===== 리스트 화면 =====
   if (!selected) {
     return (
-      <div className="px-5 py-8 space-y-6">
+      <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
         <MoodBackdrop mood="sepia" />
-        <div className="text-center animate-in">
-          <h1 className="text-2xl font-bold">
-            <span className="gradient-text">경전</span>
-          </h1>
-          <p className="text-sm text-muted mt-1.5">부처님의 말씀을 읽고 묵상하세요</p>
-        </div>
 
-        <div className="space-y-3">
-          {SUTRAS.map((sutra, i) => (
-            <div key={sutra.id} className={cn('animate-in', `stagger-${i + 1}`)}>
-              <Card
-                hover
-                variant="glass"
-                onClick={() => setSelected(sutra)}
-                className="flex items-center gap-4"
-              >
-                <div className="w-11 h-11 rounded-2xl bg-accent/10 flex items-center justify-center shrink-0">
-                  <BookOpen size={20} className="text-accent" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-bold text-foreground">{sutra.title}</h3>
-                  <p className="text-xs text-muted/60 mt-0.5 truncate">{sutra.description}</p>
-                </div>
-              </Card>
-            </div>
-          ))}
-        </div>
+        {/* 헤더 */}
+        <header className="flex items-center justify-between px-5 pt-5 pb-4">
+          <Link
+            href="/"
+            aria-label="뒤로"
+            className="p-2 -ml-2 text-foreground-dim hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={18} strokeWidth={1.5} />
+          </Link>
+          <p className="label-upper">Sutras</p>
+          <div className="w-8" />
+        </header>
+
+        {/* 타이틀 */}
+        <section className="px-5 pb-6 animate-in">
+          <h1 className="text-foreground text-[28px] tracking-tight font-medium">
+            경전
+          </h1>
+          <p className="label-tag mt-1">부처님의 말씀을 읽고 묵상하세요</p>
+        </section>
+
+        {/* 경전 리스트 — 큰 텍스트 메뉴 (Open #7 차용) */}
+        <section className="animate-in stagger-1 px-5 pb-8">
+          <p className="label-upper mb-4">Library</p>
+          <ul className="space-y-0">
+            {SUTRAS.map((sutra, i) => (
+              <li key={sutra.id} className={cn('animate-in', `stagger-${Math.min(i + 1, 6)}`)}>
+                <button
+                  onClick={() => setSelected(sutra)}
+                  className="group w-full flex items-baseline justify-between gap-4 py-5 border-b border-[var(--surface-border)] hover:bg-[var(--surface)] -mx-2 px-2 rounded-lg transition-colors text-left"
+                >
+                  <div className="flex items-baseline gap-4 flex-1 min-w-0">
+                    <span className="label-tag tabular-nums w-5 shrink-0">
+                      0{i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-foreground text-[20px] tracking-tight group-hover:text-accent-light transition-colors truncate">
+                        {sutra.title}
+                      </p>
+                      <p className="label-tag mt-1 truncate">
+                        {sutra.description}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="label-tag text-foreground-dim group-hover:text-accent transition-colors shrink-0">
+                    Read →
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     )
   }
 
+  // ===== 디테일 화면 (에디토리얼 리더) =====
   const hasChinese = selected.verses.some(v => v.chinese)
 
   return (
-    <div className="px-5 py-8 space-y-4">
+    <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
       <MoodBackdrop mood="sepia" />
-      <div className="flex items-center gap-3 animate-in">
+
+      {/* 헤더 */}
+      <header className="flex items-center justify-between px-5 pt-5 pb-4">
         <button
           onClick={() => { setSelected(null); setCommentary({}) }}
-          className="p-2 -ml-2 text-muted hover:text-foreground transition-colors rounded-xl hover:bg-card-bg"
+          aria-label="뒤로"
+          className="p-2 -ml-2 text-foreground-dim hover:text-foreground transition-colors"
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={20} strokeWidth={1.5} />
         </button>
-        <div className="flex-1">
-          <h1 className="text-lg font-bold gradient-text">{selected.title}</h1>
-          <p className="text-xs text-muted/60">{selected.description}</p>
-        </div>
-        {hasChinese && (
+        <p className="label-upper truncate max-w-[60%]">
+          {selected.title}
+        </p>
+        {hasChinese ? (
           <button
             onClick={() => setShowChinese(!showChinese)}
+            aria-label="한자 토글"
             className={cn(
-              'p-2.5 rounded-xl transition-all',
-              showChinese ? 'bg-accent/15 text-accent' : 'text-muted/50 hover:text-muted'
+              'p-2 -mr-2 transition-colors',
+              showChinese ? 'text-accent' : 'text-foreground-dim hover:text-foreground',
             )}
           >
-            <Languages size={18} />
+            <Languages size={16} strokeWidth={1.5} />
           </button>
+        ) : (
+          <div className="w-8" />
         )}
-      </div>
+      </header>
 
-      <div className="space-y-1 animate-in stagger-1">
+      {/* 타이틀 */}
+      <section className="px-5 pb-6 animate-in">
+        <p className="label-tag">Reading</p>
+        <h1 className="text-foreground text-[28px] tracking-tight font-medium mt-1.5">
+          {selected.title}
+        </h1>
+        <p className="label-tag mt-1">{selected.description}</p>
+      </section>
+
+      {/* 본문 */}
+      <section className="animate-in stagger-1 px-5 pb-12 space-y-1">
         {selected.verses.map((verse, idx) => {
           if (!verse.korean && !verse.chinese) {
-            return <div key={idx} className="h-4" />
+            return <div key={idx} className="h-3" />
           }
           return (
             <div key={idx} className="group">
               <div
-                className="py-2.5 px-3 rounded-xl hover:bg-card-bg cursor-pointer transition-colors"
+                className="py-3 px-2 -mx-2 rounded-lg hover:bg-[var(--surface)] cursor-pointer transition-colors"
                 onClick={() => verse.korean && getCommentary(verse.korean, idx)}
               >
-                <p className="text-[15px] text-foreground/85 leading-relaxed">{verse.korean}</p>
+                <p className="text-[16px] text-foreground/95 leading-[1.7] tracking-tight">
+                  {verse.korean}
+                </p>
                 {showChinese && verse.chinese && (
-                  <p className="text-sm text-accent/50 mt-1">{verse.chinese}</p>
+                  <p
+                    className="text-[14px] text-accent/70 mt-1.5 leading-relaxed font-serif"
+                  >
+                    {verse.chinese}
+                  </p>
                 )}
                 {loadingIdx === idx && (
-                  <p className="text-xs text-muted/50 mt-2 animate-pulse">AI 해설 생성 중...</p>
+                  <p className="label-tag mt-2 animate-pulse">AI 해설 생성 중...</p>
                 )}
                 {commentary[idx] && (
-                  <Card variant="glass" className="mt-2 p-3">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <Sparkles size={12} className="text-accent" />
-                      <span className="text-[10px] text-accent font-semibold tracking-wide">AI 해설</span>
-                    </div>
-                    <p className="text-xs text-foreground/70 leading-relaxed">{commentary[idx]}</p>
-                  </Card>
+                  <div className="surface-subtle rounded-xl p-3 mt-3">
+                    <p className="label-tag text-accent mb-1.5">AI 해설</p>
+                    <p className="text-[13px] text-foreground/80 leading-[1.65]">
+                      {commentary[idx]}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
           )
         })}
-      </div>
+      </section>
 
-      <div className="text-center pt-4">
-        <p className="text-xs text-muted/40">구절을 터치하면 AI 해설을 볼 수 있습니다</p>
-      </div>
+      <p className="label-tag text-center pb-8">
+        구절을 터치하면 AI 해설을 볼 수 있습니다
+      </p>
     </div>
   )
 }

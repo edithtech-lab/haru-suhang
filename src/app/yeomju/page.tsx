@@ -1,33 +1,33 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { MANTRAS } from '@/lib/sutras'
 import { SUTRAS as YEOBUL_SUTRAS } from '@/lib/constants'
 import { getSoundGenerator } from '@/components/audio-player'
 import { useAuth } from '@/lib/auth-context'
 import { savePractice } from '@/lib/practice-store'
 import { cn } from '@/lib/utils'
-import { RotateCcw, Check } from 'lucide-react'
 import { MoodBackdrop } from '@/components/mood-backdrop'
+import { Mandala } from '@/components/mandala'
 
 type Mode = 'yeomju' | 'dokgyeong'
 type SutraKey = keyof typeof YEOBUL_SUTRAS
 
 const BEAD_COUNT = 108
-const BEAD_ANGLES = Array.from({ length: 27 }, (_, i) => (i * 360) / 27)
 
 export default function YeomjuPage() {
   const { user } = useAuth()
   const [mode, setMode] = useState<Mode>('yeomju')
   const [count, setCount] = useState(0)
   const [completed, setCompleted] = useState(false)
+  const [pressing, setPressing] = useState(false)
   const startTimeRef = useRef(0)
   const [mantraId, setMantraId] = useState(MANTRAS[0].id)
-  const mantra = MANTRAS.find(m => m.id === mantraId)!
-  const activeBeadIdx = Math.floor((count % 27))
   const [selectedSutra, setSelectedSutra] = useState<SutraKey>('나무아미타불')
+  const mantra = MANTRAS.find(m => m.id === mantraId)!
+  const progress = count / BEAD_COUNT
 
   const handleReset = useCallback(() => {
     setCount(0)
@@ -45,6 +45,8 @@ export default function YeomjuPage() {
     if (count === 0) startTimeRef.current = Date.now()
     if (navigator.vibrate) navigator.vibrate(30)
     getSoundGenerator().playMoktak()
+    setPressing(true)
+    setTimeout(() => setPressing(false), 120)
     const newCount = count + 1
     setCount(newCount)
     if (newCount >= BEAD_COUNT) {
@@ -56,47 +58,74 @@ export default function YeomjuPage() {
   }, [count, completed, user])
 
   return (
-    <div className="px-5 py-8 space-y-6">
+    <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
       <MoodBackdrop mood="olive" />
-      <div className="text-center animate-in">
-        <h1 className="text-2xl font-bold">
-          <span className="gradient-text">염불</span>
-        </h1>
-        <p className="text-sm text-muted mt-1.5">만트라와 경전으로 마음을 모으세요</p>
-      </div>
 
-      {/* 모드 탭 */}
-      <div className="animate-in stagger-1 flex p-1 rounded-2xl bg-card-bg border border-card-border">
+      {/* 헤더 */}
+      <header className="flex items-center justify-between px-5 pt-5 pb-2">
+        <Link
+          href="/"
+          aria-label="뒤로"
+          className="p-2 -ml-2 text-foreground-dim hover:text-foreground transition-colors"
+        >
+          <ArrowLeft size={18} strokeWidth={1.5} />
+        </Link>
+        <p className="label-upper">Chant</p>
+        {count > 0 ? (
+          <button
+            onClick={handleReset}
+            aria-label="초기화"
+            className="p-2 -mr-2 text-foreground-dim hover:text-foreground transition-colors"
+          >
+            <RotateCcw size={16} strokeWidth={1.5} />
+          </button>
+        ) : (
+          <div className="w-8" />
+        )}
+      </header>
+
+      {/* 타이틀 */}
+      <section className="px-5 pb-4 animate-in">
+        <h1 className="text-foreground text-[26px] tracking-tight font-medium">
+          염불
+        </h1>
+        <p className="label-tag mt-1">진언과 경전으로 마음을 모으세요</p>
+      </section>
+
+      {/* 모드 탭 (미니멀 텍스트 탭) */}
+      <nav className="px-5 pb-5 flex items-center gap-5 border-b border-[var(--surface-border)] animate-in stagger-1">
         {(['yeomju', 'dokgyeong'] as const).map(m => (
           <button
             key={m}
             onClick={() => switchMode(m)}
             className={cn(
-              'flex-1 py-2.5 text-sm font-medium rounded-xl transition-all',
-              mode === m
-                ? 'bg-accent text-[#0f0d0a] shadow-sm'
-                : 'text-muted'
+              'pb-2 text-[15px] tracking-tight transition-all relative',
+              mode === m ? 'text-foreground' : 'text-muted hover:text-foreground-dim',
             )}
           >
             {m === 'yeomju' ? '염주' : '독경'}
+            {mode === m && (
+              <div className="absolute -bottom-[1px] left-0 right-0 h-[1.5px] bg-foreground" />
+            )}
           </button>
         ))}
-      </div>
+      </nav>
 
-      <div className="animate-in stagger-2">
+      {/* 콘텐츠 */}
+      <section className="flex-1 flex flex-col px-5 pt-6 pb-8 animate-in stagger-2">
         {mode === 'yeomju' ? (
           <>
-            {/* 만트라 선택 */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-6">
+            {/* 진언 칩 */}
+            <div className="flex gap-1.5 overflow-x-auto pb-3 scrollbar-hide mb-2">
               {MANTRAS.map(m => (
                 <button
                   key={m.id}
                   onClick={() => { setMantraId(m.id); handleReset() }}
                   className={cn(
-                    'px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all',
+                    'px-3.5 py-1.5 rounded-full text-[12px] whitespace-nowrap transition-all',
                     mantraId === m.id
-                      ? 'bg-accent/15 text-accent font-medium border border-accent/30'
-                      : 'text-muted/50 border border-transparent hover:text-muted'
+                      ? 'bg-foreground text-background'
+                      : 'border border-[var(--surface-border)] text-foreground-dim hover:text-foreground',
                   )}
                 >
                   {m.label}
@@ -104,76 +133,88 @@ export default function YeomjuPage() {
               ))}
             </div>
 
-            {/* 염주 원형 */}
-            <div className="flex justify-center">
+            {/* 진언 + 만다라 + 카운트 (탭 영역) */}
+            <div
+              className="relative flex-1 min-h-[55vh] flex flex-col items-center justify-center cursor-pointer select-none"
+              onClick={handleCount}
+              onTouchStart={(e) => { e.preventDefault(); handleCount() }}
+            >
+              {/* 큰 만다라 배경 */}
               <div
-                className="relative w-72 h-72 cursor-pointer select-none"
-                onClick={handleCount}
-                onTouchStart={(e) => { e.preventDefault(); handleCount() }}
+                className={cn(
+                  'absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-700',
+                  pressing && 'scale-[1.02]',
+                  completed && 'opacity-60',
+                )}
               >
-                <svg viewBox="0 0 300 300" className="w-full h-full">
-                  <defs>
-                    <radialGradient id="beadActive">
-                      <stop offset="0%" stopColor="#e8d5b7" />
-                      <stop offset="100%" stopColor="#c9a87c" />
-                    </radialGradient>
-                  </defs>
-                  {BEAD_ANGLES.map((angle, idx) => {
-                    const rad = (angle - 90) * (Math.PI / 180)
-                    const cx = 150 + 120 * Math.cos(rad)
-                    const cy = 150 + 120 * Math.sin(rad)
-                    const isActive = idx === activeBeadIdx
-                    const isPassed = idx < activeBeadIdx || (count >= 27 && idx <= activeBeadIdx)
-                    return (
-                      <circle
-                        key={idx}
-                        cx={cx} cy={cy}
-                        r={isActive ? 10 : 7}
-                        fill={
-                          completed ? '#6ecf8e'
-                            : isActive ? 'url(#beadActive)'
-                              : isPassed ? '#c9a87c'
-                                : 'rgba(201,168,124,0.15)'
-                        }
-                        className="transition-all duration-200"
-                      />
-                    )
-                  })}
-                  <circle cx="150" cy="270" r="12" fill={completed ? '#6ecf8e' : '#c9a87c'} />
-                  <line x1="150" y1="282" x2="150" y2="298" stroke={completed ? '#6ecf8e' : '#c9a87c'} strokeWidth="2" />
-                  <line x1="145" y1="298" x2="155" y2="298" stroke={completed ? '#6ecf8e' : '#c9a87c'} strokeWidth="2" />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={cn('text-4xl font-bold tracking-tight', completed ? 'text-success' : 'gradient-text')}>
-                    {count}
-                  </span>
-                  <span className="text-xs text-muted/50 mt-1">/ {BEAD_COUNT}</span>
-                </div>
+                <Mandala
+                  size={260}
+                  className={cn(
+                    'transition-colors duration-500',
+                    completed ? 'text-success/60' : 'text-foreground/22',
+                  )}
+                  inner
+                />
               </div>
-            </div>
 
-            <Card variant="glass" className="text-center mt-6">
-              <p className={cn('text-lg font-medium', completed ? 'text-success' : 'gradient-text')}>
-                {completed ? '염주 수행을 마쳤습니다' : mantra.text}
-              </p>
+              {/* 진행 외곽 회전 */}
+              <div
+                aria-hidden
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                style={{
+                  transform: `rotate(${progress * 360}deg)`,
+                  transition: 'transform 1s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              >
+                <Mandala size={320} className="text-accent/15" />
+              </div>
+
+              <div className="relative z-10 text-center px-4">
+                <p className="label-upper mb-2 text-foreground-dim">
+                  {mantra.label}
+                </p>
+                <p
+                  className={cn(
+                    'text-foreground text-[22px] leading-tight tracking-tight transition-opacity duration-300',
+                    pressing ? 'opacity-90' : 'opacity-100',
+                    completed && 'text-success',
+                  )}
+                >
+                  {completed ? '수행을 마쳤습니다' : mantra.text}
+                </p>
+                <p
+                  className={cn(
+                    'text-foreground text-[68px] tracking-tight leading-none tabular-nums font-light mt-6 transition-transform duration-100',
+                    pressing && 'scale-[0.96]',
+                    completed && 'text-success',
+                  )}
+                  style={{ fontVariationSettings: '"wght" 280' }}
+                >
+                  {count}
+                </p>
+                <p className="label-tag mt-2 tabular-nums">/ {BEAD_COUNT}</p>
+              </div>
+
               {!completed && (
-                <p className="text-xs text-muted/50 mt-2">염주를 터치하며 {mantra.label}을 외우세요</p>
+                <p className="absolute bottom-2 label-upper text-foreground-dim animate-in stagger-3">
+                  Tap anywhere
+                </p>
               )}
-            </Card>
+            </div>
           </>
         ) : (
           <>
-            {/* 경전 선택 */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-6">
+            {/* 경전 칩 */}
+            <div className="flex gap-1.5 overflow-x-auto pb-3 scrollbar-hide mb-4">
               {(Object.keys(YEOBUL_SUTRAS) as SutraKey[]).map(key => (
                 <button
                   key={key}
                   onClick={() => { setSelectedSutra(key); handleReset() }}
                   className={cn(
-                    'px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all',
+                    'px-3.5 py-1.5 rounded-full text-[12px] whitespace-nowrap transition-all',
                     selectedSutra === key
-                      ? 'bg-accent/15 text-accent font-medium border border-accent/30'
-                      : 'text-muted/50 border border-transparent hover:text-muted'
+                      ? 'bg-foreground text-background'
+                      : 'border border-[var(--surface-border)] text-foreground-dim hover:text-foreground',
                   )}
                 >
                   {key}
@@ -181,45 +222,65 @@ export default function YeomjuPage() {
               ))}
             </div>
 
-            <Card variant="glass" className="min-h-[120px]">
-              <p className="text-foreground/80 leading-relaxed whitespace-pre-line text-center text-[15px]">
+            {/* 경전 본문 */}
+            <div className="surface-subtle rounded-2xl p-5 mb-6">
+              <p className="text-foreground/90 leading-[1.7] whitespace-pre-line text-[14px] tracking-tight">
                 {YEOBUL_SUTRAS[selectedSutra]}
               </p>
-            </Card>
+            </div>
 
-            <div className="flex flex-col items-center gap-4 mt-6">
-              <div className="text-center">
-                <span className="text-4xl font-bold gradient-text">{count}</span>
-                <span className="text-muted/50 text-lg ml-1">/ {BEAD_COUNT}</span>
-              </div>
-              <button
-                onClick={handleCount}
-                disabled={completed}
+            {/* 카운트 영역 */}
+            <div
+              className="relative flex-1 min-h-[40vh] flex flex-col items-center justify-center cursor-pointer select-none"
+              onClick={handleCount}
+              onTouchStart={(e) => { e.preventDefault(); handleCount() }}
+            >
+              <div
                 className={cn(
-                  'w-28 h-28 rounded-full flex items-center justify-center text-3xl transition-all active:scale-95',
-                  completed
-                    ? 'bg-success/10 border border-success/30'
-                    : 'bg-accent/10 border border-accent/20 hover:bg-accent/15 glow-pulse'
+                  'absolute inset-0 flex items-center justify-center pointer-events-none',
+                  pressing && 'scale-[1.02]',
                 )}
               >
-                {completed ? <Check size={36} className="text-success" /> : '🪘'}
-              </button>
-              <p className="text-sm text-muted/50">
-                {completed ? '독경을 마쳤습니다' : '목탁을 터치하여 염불하세요'}
-              </p>
+                <Mandala
+                  size={220}
+                  className={cn(
+                    'transition-colors',
+                    completed ? 'text-success/60' : 'text-foreground/20',
+                  )}
+                />
+              </div>
+
+              <div className="relative z-10 text-center">
+                <p className="label-upper mb-2 text-foreground-dim">
+                  Recitation
+                </p>
+                <p
+                  className={cn(
+                    'text-foreground text-[80px] tracking-tight leading-none tabular-nums font-light transition-transform duration-100',
+                    pressing && 'scale-[0.96]',
+                    completed && 'text-success',
+                  )}
+                  style={{ fontVariationSettings: '"wght" 280' }}
+                >
+                  {count}
+                </p>
+                <p className="label-tag mt-2 tabular-nums">/ {BEAD_COUNT}</p>
+                {completed && (
+                  <p className="text-success text-[12px] uppercase tracking-[0.3em] mt-4">
+                    Complete
+                  </p>
+                )}
+              </div>
+
+              {!completed && (
+                <p className="absolute bottom-2 label-upper text-foreground-dim">
+                  Tap to count
+                </p>
+              )}
             </div>
           </>
         )}
-      </div>
-
-      {(count > 0) && (
-        <div className="text-center">
-          <Button variant="ghost" size="sm" onClick={handleReset} className="gap-2">
-            <RotateCcw size={14} />
-            {completed ? '다시 시작' : '초기화'}
-          </Button>
-        </div>
-      )}
+      </section>
     </div>
   )
 }
