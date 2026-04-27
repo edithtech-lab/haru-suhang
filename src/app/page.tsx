@@ -142,25 +142,57 @@ export default function HomePage() {
             onError={() => setHeroImageReady(false)}
           />
 
-          {/* 3. 비네트 — 가장자리 어둡게 (이미지·그라데이션 공통) */}
+          {/* 3. 컬러 톤 오버레이 — 사진 위에 앱 액센트 톤 살짝 덮음 */}
           <div
-            className="absolute inset-0"
+            aria-hidden
+            className="absolute inset-0 mix-blend-multiply pointer-events-none"
             style={{
-              background:
-                'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.65) 100%)',
+              background: allDone
+                ? 'linear-gradient(135deg, rgba(143, 184, 141, 0.18) 0%, rgba(40, 60, 40, 0.25) 100%)'
+                : 'linear-gradient(135deg, rgba(196, 86, 36, 0.22) 0%, rgba(40, 18, 10, 0.32) 100%)',
+              opacity: 0.85,
             }}
           />
 
-          {/* 4. 그레인 노이즈 — 필름 질감 */}
+          {/* 4. 따뜻한 글로우 — 우상단 부드러운 광원 */}
           <div
-            className="absolute inset-0 opacity-[0.07] mix-blend-overlay pointer-events-none"
+            aria-hidden
+            className="absolute inset-0 mix-blend-overlay pointer-events-none"
+            style={{
+              background: allDone
+                ? 'radial-gradient(ellipse 65% 50% at 75% 22%, rgba(180, 220, 180, 0.3) 0%, transparent 65%)'
+                : 'radial-gradient(ellipse 65% 50% at 75% 22%, rgba(244, 165, 111, 0.32) 0%, transparent 65%)',
+            }}
+          />
+
+          {/* 5. 비네트 — 가장자리 어둡게 */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.55) 100%)',
+            }}
+          />
+
+          {/* 6. 그레인 노이즈 — 필름 질감 */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.06] mix-blend-overlay pointer-events-none"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
             }}
           />
 
-          {/* 5. 하단 텍스트용 오버레이 */}
-          <div className="absolute inset-0 hero-overlay" />
+          {/* 7. 하단 텍스트용 오버레이 — 더 강하게 */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(180deg, transparent 0%, transparent 45%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.85) 100%)',
+            }}
+          />
 
           {/* 콘텐츠 오버레이 */}
           <div className="relative h-full flex flex-col justify-between p-6">
