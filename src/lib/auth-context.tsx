@@ -7,7 +7,7 @@ import { getSupabase } from '@/lib/supabase/client'
 interface AuthContextType {
   user: User | null
   loading: boolean
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<{ error?: string }>
   signInWithEmail: (email: string, password: string) => Promise<{ error?: string }>
   signUpWithEmail: (email: string, password: string) => Promise<{ error?: string; needsConfirmation?: boolean }>
   signOut: () => Promise<void>
@@ -16,7 +16,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  signInWithGoogle: async () => {},
+  signInWithGoogle: async () => ({}),
   signInWithEmail: async () => ({}),
   signUpWithEmail: async () => ({}),
   signOut: async () => {},
@@ -41,10 +41,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signInWithGoogle = async () => {
-    await getSupabase().auth.signInWithOAuth({
+    const { error } = await getSupabase().auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
+    if (error) return { error: error.message }
+    return {}
   }
 
   const signInWithEmail = async (email: string, password: string) => {

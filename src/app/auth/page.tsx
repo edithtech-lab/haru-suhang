@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
@@ -18,7 +18,6 @@ function isValidEmail(s: string) {
 
 export default function AuthPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth()
 
   const [step, setStep] = useState<Step>('welcome')
@@ -44,12 +43,6 @@ export default function AuthPage() {
       return () => clearTimeout(t)
     }
   }, [step])
-
-  // 쿼리에서 mode 자동 설정
-  useEffect(() => {
-    const m = searchParams.get('mode')
-    if (m === 'sign-in' || m === 'sign-up') setMode(m)
-  }, [searchParams])
 
   const handleBack = () => {
     setError(null)
@@ -106,9 +99,19 @@ export default function AuthPage() {
 
   const handleGoogle = async () => {
     setSubmitting(true)
+    setError(null)
     try {
-      await signInWithGoogle()
-    } catch {
+      const { error: err } = await signInWithGoogle()
+      if (err) {
+        setError(
+          err.toLowerCase().includes('provider is not enabled')
+            ? 'Google 로그인이 아직 설정되지 않았습니다. 이메일로 가입해주세요.'
+            : `Google 로그인 실패: ${err}`,
+        )
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '로그인 실패')
+    } finally {
       setSubmitting(false)
     }
   }
@@ -234,6 +237,10 @@ export default function AuthPage() {
               >
                 Continue as guest
               </Link>
+
+              {error && (
+                <p className="pt-2 text-center text-danger text-[12px] leading-relaxed">{error}</p>
+              )}
             </div>
           </div>
         )}
