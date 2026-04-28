@@ -3,6 +3,20 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   const { text, source } = await req.json()
 
+  // 입력 검증 (DoS / 비용 폭주 방지)
+  if (typeof text !== 'string' || text.length === 0 || text.length > 1000) {
+    return NextResponse.json(
+      { commentary: '잘못된 입력입니다.' },
+      { status: 400 }
+    )
+  }
+  if (source && (typeof source !== 'string' || source.length > 100)) {
+    return NextResponse.json(
+      { commentary: '잘못된 입력입니다.' },
+      { status: 400 }
+    )
+  }
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return NextResponse.json(

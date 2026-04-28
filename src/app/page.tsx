@@ -180,7 +180,7 @@ export default function HomePage() {
 
           {/* 2. 실사 이미지 — 즉시 표시 (페이드 없음) */}
           <Image
-            src={allDone ? '/images/hero/anjali-complete.webp' : '/images/hero/anjali.webp'}
+            src="/images/hero/anjali.webp"
             alt=""
             fill
             priority

@@ -27,8 +27,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  // 접근성을 위해 사용자 확대 허용 (WCAG)
+  maximumScale: 5,
   themeColor: '#000000',
 }
 

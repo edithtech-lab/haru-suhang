@@ -64,6 +64,7 @@ export default function Bae108Page() {
       const durationSec = Math.floor((Date.now() - startTimeRef.current) / 1000)
       savePractice(user?.id ?? null, 'bae108', durationSec, BAE_TARGET, true)
         .then(() => setSaved(true))
+        .catch(() => setSaved(true)) // 실패해도 사용자 흐름 끊지 않음
     }
   }, [count, completed, user, soundId])
 

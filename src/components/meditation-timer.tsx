@@ -143,8 +143,8 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
           </button>
         </div>
 
-        {/* 옵션 카드 3개 (Open #2 차용) */}
-        <div className="w-full grid grid-cols-3 gap-2 px-1 animate-in stagger-2 mb-10">
+        {/* 옵션 카드 2개 (Open #2 차용) */}
+        <div className="w-full grid grid-cols-2 gap-2 px-1 animate-in stagger-2 mb-10">
           <button
             onClick={() => setModal('startEnd')}
             className="surface-subtle rounded-2xl py-3 px-3 hover:bg-[var(--surface-hover)] transition-colors active:scale-[0.98]"
@@ -158,13 +158,6 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
           >
             <p className="label-tag text-foreground-dim mb-1.5">Sound</p>
             <p className="text-foreground text-[14px] tracking-tight truncate">{selectedSoundLabel}</p>
-          </button>
-          <button
-            disabled
-            className="surface-subtle rounded-2xl py-3 px-3 opacity-50 cursor-not-allowed"
-          >
-            <p className="label-tag text-foreground-dim mb-1.5">Interval</p>
-            <p className="text-foreground text-[14px] tracking-tight">None</p>
           </button>
         </div>
 

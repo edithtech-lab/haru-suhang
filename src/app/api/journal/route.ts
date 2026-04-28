@@ -29,6 +29,14 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // 길이 제한 (DoS / 비용 폭주 방지)
+  if (entry.length > 4000) {
+    return new Response(
+      JSON.stringify({ error: '내용이 너무 깁니다. 4000자 이내로 입력해주세요.' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return new Response(
