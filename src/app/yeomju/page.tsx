@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, RotateCcw } from 'lucide-react'
+import { ArrowLeft, RotateCcw, Plus, X } from 'lucide-react'
 import { MANTRAS } from '@/lib/sutras'
 import { SUTRAS as YEOBUL_SUTRAS } from '@/lib/constants'
 import { getSoundGenerator } from '@/components/audio-player'
@@ -11,11 +11,37 @@ import { savePractice } from '@/lib/practice-store'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { Mandala } from '@/components/mandala'
+import { BottomSheet } from '@/components/bottom-sheet'
 
 type Mode = 'yeomju' | 'dokgyeong'
 type SutraKey = keyof typeof YEOBUL_SUTRAS
 
+interface CustomMantra {
+  id: string
+  label: string
+  text: string
+}
+
 const BEAD_COUNT = 108
+const CUSTOM_MANTRAS_KEY = 'haru-custom-mantras'
+
+function loadCustomMantras(): CustomMantra[] {
+  if (typeof window === 'undefined') return []
+  try {
+    return JSON.parse(localStorage.getItem(CUSTOM_MANTRAS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function saveCustomMantras(mantras: CustomMantra[]) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(CUSTOM_MANTRAS_KEY, JSON.stringify(mantras))
+  } catch {
+    // 무시
+  }
+}
 
 export default function YeomjuPage() {
   const { user } = useAuth()
@@ -26,8 +52,42 @@ export default function YeomjuPage() {
   const startTimeRef = useRef(0)
   const [mantraId, setMantraId] = useState(MANTRAS[0].id)
   const [selectedSutra, setSelectedSutra] = useState<SutraKey>('나무아미타불')
-  const mantra = MANTRAS.find(m => m.id === mantraId)!
+  const [customMantras, setCustomMantras] = useState<CustomMantra[]>([])
+  const [showAddSheet, setShowAddSheet] = useState(false)
+  const [newLabel, setNewLabel] = useState('')
+  const [newText, setNewText] = useState('')
+
+  useEffect(() => {
+    setCustomMantras(loadCustomMantras())
+  }, [])
+
+  const allMantras = [
+    ...MANTRAS.map(m => ({ ...m, isCustom: false })),
+    ...customMantras.map(m => ({ ...m, isCustom: true })),
+  ]
+  const mantra = allMantras.find(m => m.id === mantraId) || allMantras[0]
   const progress = count / BEAD_COUNT
+
+  const handleAddCustom = () => {
+    if (!newLabel.trim() || !newText.trim()) return
+    const id = `custom-${crypto.randomUUID()}`
+    const next: CustomMantra = { id, label: newLabel.trim(), text: newText.trim() }
+    const updated = [...customMantras, next]
+    setCustomMantras(updated)
+    saveCustomMantras(updated)
+    setMantraId(id)
+    setNewLabel('')
+    setNewText('')
+    setShowAddSheet(false)
+  }
+
+  const handleDeleteCustom = (id: string) => {
+    if (!confirm('이 진언을 삭제하시겠습니까?')) return
+    const updated = customMantras.filter(m => m.id !== id)
+    setCustomMantras(updated)
+    saveCustomMantras(updated)
+    if (mantraId === id) setMantraId(MANTRAS[0].id)
+  }
 
   const handleReset = useCallback(() => {
     setCount(0)
@@ -117,20 +177,43 @@ export default function YeomjuPage() {
           <>
             {/* 진언 칩 */}
             <div className="flex gap-1.5 overflow-x-auto pb-3 scrollbar-hide mb-2">
-              {MANTRAS.map(m => (
-                <button
-                  key={m.id}
-                  onClick={() => { setMantraId(m.id); handleReset() }}
-                  className={cn(
-                    'px-3.5 py-1.5 rounded-full text-[12px] whitespace-nowrap transition-all',
-                    mantraId === m.id
-                      ? 'bg-foreground text-background'
-                      : 'border border-[var(--surface-border)] text-foreground-dim hover:text-foreground',
+              {allMantras.map(m => (
+                <div key={m.id} className="relative shrink-0">
+                  <button
+                    onClick={() => { setMantraId(m.id); handleReset() }}
+                    className={cn(
+                      'px-3.5 py-1.5 rounded-full text-[12px] whitespace-nowrap transition-all',
+                      mantraId === m.id
+                        ? 'bg-foreground text-background'
+                        : 'border border-[var(--surface-border)] text-foreground-dim hover:text-foreground',
+                      m.isCustom && mantraId !== m.id && 'border-[var(--accent-glow)] text-accent',
+                      m.isCustom && 'pr-7',
+                    )}
+                  >
+                    {m.label}
+                  </button>
+                  {m.isCustom && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteCustom(m.id) }}
+                      aria-label="진언 삭제"
+                      className={cn(
+                        'absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full flex items-center justify-center transition-colors',
+                        mantraId === m.id ? 'text-background/70 hover:text-background' : 'text-foreground-dim/60 hover:text-danger',
+                      )}
+                    >
+                      <X size={10} strokeWidth={2} />
+                    </button>
                   )}
-                >
-                  {m.label}
-                </button>
+                </div>
               ))}
+              <button
+                onClick={() => setShowAddSheet(true)}
+                aria-label="진언 추가"
+                className="shrink-0 px-3 py-1.5 rounded-full text-[12px] border border-dashed border-[var(--surface-border)] text-foreground-dim hover:text-foreground hover:border-[var(--accent-glow)] transition-all flex items-center gap-1"
+              >
+                <Plus size={11} strokeWidth={2} />
+                추가
+              </button>
             </div>
 
             {/* 진언 + 만다라 + 카운트 (탭 영역) */}
@@ -281,6 +364,48 @@ export default function YeomjuPage() {
           </>
         )}
       </section>
+
+      {/* 진언 추가 모달 */}
+      {showAddSheet && (
+        <BottomSheet
+          title="새 진언 추가"
+          onClose={() => { setShowAddSheet(false); setNewLabel(''); setNewText('') }}
+        >
+          <div className="space-y-4 pb-2">
+            <div>
+              <p className="label-tag mb-2">이름</p>
+              <input
+                type="text"
+                value={newLabel}
+                onChange={e => setNewLabel(e.target.value)}
+                placeholder="예: 나의 진언"
+                maxLength={20}
+                autoFocus
+                className="w-full px-4 py-3 rounded-xl text-[14px] text-foreground placeholder:text-muted/50 bg-[var(--surface)] border border-[var(--surface-border)] focus:outline-none focus:border-[var(--accent-glow)] transition-colors"
+              />
+            </div>
+            <div>
+              <p className="label-tag mb-2">내용</p>
+              <textarea
+                value={newText}
+                onChange={e => setNewText(e.target.value)}
+                placeholder="외울 진언 또는 발원문을 입력하세요"
+                rows={3}
+                maxLength={200}
+                className="w-full resize-none px-4 py-3 rounded-xl text-[14px] text-foreground placeholder:text-muted/50 bg-[var(--surface)] border border-[var(--surface-border)] focus:outline-none focus:border-[var(--accent-glow)] transition-colors"
+              />
+              <p className="label-tag mt-1.5 text-right">{newText.length} / 200</p>
+            </div>
+            <button
+              onClick={handleAddCustom}
+              disabled={!newLabel.trim() || !newText.trim()}
+              className="w-full py-3.5 rounded-full bg-foreground text-background text-[14px] tracking-wide active:scale-[0.98] transition-all disabled:opacity-30"
+            >
+              저장
+            </button>
+          </div>
+        </BottomSheet>
+      )}
     </div>
   )
 }

@@ -25,6 +25,54 @@ function getGreeting(): string {
   return 'Good evening'
 }
 
+// 시간대별 짧은 한국어 메시지 (매일 같은 시간대 = 같은 메시지)
+const TIME_MESSAGES: Record<string, string[]> = {
+  dawn: [
+    '고요한 새벽, 마음을 여세요',
+    '하루의 첫 호흡',
+    '새벽의 정적 속에서',
+    '맑은 새벽 공기를 들이쉬어요',
+  ],
+  morning: [
+    '한 호흡 깊게 쉬어볼까요',
+    '오늘도 한 걸음씩',
+    '아침의 마음 한 자락',
+    '천천히, 그러나 멈추지 않게',
+  ],
+  afternoon: [
+    '잠시 멈춤이 필요한 시간',
+    '오후의 고요',
+    '한 박자 쉬어가세요',
+    '바쁜 마음을 내려놓아요',
+  ],
+  evening: [
+    '오늘 하루 수고하셨어요',
+    '저녁의 평온',
+    '내려놓을 시간',
+    '하루를 가만히 돌아보세요',
+  ],
+  night: [
+    '고요한 밤이에요',
+    '잠들기 전 한 호흡',
+    '오늘도 무사히 닿았네요',
+    '내일을 위해 마음을 비워요',
+  ],
+}
+
+function getTimeMessage(): string {
+  const h = new Date().getHours()
+  let bucket: keyof typeof TIME_MESSAGES
+  if (h < 5) bucket = 'night'
+  else if (h < 9) bucket = 'dawn'
+  else if (h < 13) bucket = 'morning'
+  else if (h < 17) bucket = 'afternoon'
+  else if (h < 22) bucket = 'evening'
+  else bucket = 'night'
+  const list = TIME_MESSAGES[bucket]
+  // 날짜 + 시간대로 결정 (같은 시간대 안에서는 일관, 매일 다름)
+  return list[new Date().getDate() % list.length]
+}
+
 export default function HomePage() {
   const { user, loading, signOut } = useAuth()
   const [status, setStatus] = useState<DailyStatus>({ bae108: false, meditation: false, yeobul: false })
@@ -32,6 +80,7 @@ export default function HomePage() {
 
   const todayWisdom = DAILY_WISDOMS[new Date().getDate() % DAILY_WISDOMS.length]
   const greeting = getGreeting()
+  const timeMessage = getTimeMessage()
   const userName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || '수행자'
 
   useEffect(() => {
@@ -221,13 +270,16 @@ export default function HomePage() {
                   </>
                 ) : (
                   <>
+                    <p className="text-foreground-dim text-[12px] mb-2 tracking-wide">
+                      {timeMessage}
+                    </p>
                     <p className="label-tag mb-2 text-foreground-dim">
                       {nextPractice!.english} · {nextPractice!.duration}
                     </p>
                     <h2 className="text-[40px] leading-[0.95] tracking-tight text-foreground font-medium">
                       {nextPractice!.label}
                     </h2>
-                    <p className="text-foreground-dim text-[12px] mt-3 leading-relaxed line-clamp-2 max-w-[85%] italic">
+                    <p className="text-foreground-dim text-[11px] mt-3 leading-relaxed line-clamp-2 max-w-[85%] italic">
                       &ldquo;{todayWisdom.text.slice(0, 42)}
                       {todayWisdom.text.length > 42 && '…'}&rdquo;
                     </p>
