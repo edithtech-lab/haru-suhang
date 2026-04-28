@@ -1,16 +1,29 @@
--- Phase 5: chat_messages RLS 점검 + 정상화
--- 멱등(idempotent) — 정책이 있든 없든 안전하게 실행
+-- Phase 5: chat_messages 테이블 + RLS
+-- 멱등(idempotent) — 테이블/정책 있든 없든 안전 실행
 -- Supabase SQL Editor에서 실행
 
 -- ============================================================
--- 1) RLS 활성화 (이미 활성이면 무영향)
+-- 1) 테이블 (없으면 생성)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role text NOT NULL CHECK (role IN ('user', 'assistant')),
+  content text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS chat_messages_user_created_idx
+  ON chat_messages(user_id, created_at);
+
+-- ============================================================
+-- 2) RLS 활성화
 -- ============================================================
 ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
--- 2) 기존 정책 정리 후 표준 정책으로 재생성
+-- 3) 정책 표준화
 -- ============================================================
-
 DROP POLICY IF EXISTS "chat_select_own" ON chat_messages;
 CREATE POLICY "chat_select_own" ON chat_messages
   FOR SELECT USING (auth.uid() = user_id);
@@ -23,12 +36,9 @@ DROP POLICY IF EXISTS "chat_delete_own" ON chat_messages;
 CREATE POLICY "chat_delete_own" ON chat_messages
   FOR DELETE USING (auth.uid() = user_id);
 
--- update 정책 없음 (immutable, 삭제 후 재작성)
-
 -- ============================================================
--- 3) 검증 쿼리 — 실행 후 결과 확인
+-- 4) 검증
 -- ============================================================
--- 정책이 정확히 3개 보여야 함
 SELECT policyname, cmd, qual::text AS using_clause, with_check::text AS check_clause
 FROM pg_policies
 WHERE schemaname = 'public' AND tablename = 'chat_messages'
