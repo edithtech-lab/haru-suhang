@@ -23,6 +23,18 @@ const VARIANTS = [
   { id: 'v10', label: '달빛 합장', sub: 'Moonlight · Silver' },
 ]
 
+// Series W — 사용자 선호 4장 (v01·v02·v04·v05) 특징 살린 변주
+const VARIANTS_W = [
+  { id: 'w01', label: '합장 정면 — 가까이', sub: 'Frontal · Close', category: '정면 합장' },
+  { id: 'w02', label: '합장 정면 — 좌측 광원', sub: 'Frontal · Left rim', category: '정면 합장' },
+  { id: 'w03', label: '탑다운 — 한지', sub: 'Top-down · Hanji', category: '탑다운' },
+  { id: 'w04', label: '탑다운 — 빛줄기', sub: 'Top-down · Beam', category: '탑다운' },
+  { id: 'w05', label: '매크로 — 손가락 마디', sub: 'Macro · Knuckles', category: '매크로' },
+  { id: 'w06', label: '매크로 — 손바닥 + 빛', sub: 'Macro · Palm', category: '매크로' },
+  { id: 'w07', label: '염주 — 합장 + 빛 받은 알', sub: 'Mala · Lit bead', category: '염주' },
+  { id: 'w08', label: '염주 — 알 굴림 매크로', sub: 'Mala · Rolling', category: '염주' },
+]
+
 const QUOTE = '"하루를 성실히 보내면, 편안히 잠들 수 있고…"'
 
 export default function HeroPhotosLab() {
@@ -44,16 +56,97 @@ export default function HeroPhotosLab() {
       </header>
 
       <section className="px-5 py-6 max-w-3xl mx-auto w-full">
-        <p className="label-tag mb-3">Lab · 10 variants</p>
+        <p className="label-tag mb-3">Lab · 18 variants</p>
         <h1 className="text-foreground text-[28px] tracking-tight font-medium">
           합장 시안
         </h1>
         <p className="text-foreground-dim text-[13px] mt-2 leading-relaxed">
-          Gemini 2.5 Flash Image로 생성된 10장의 합장 변주.
+          Gemini 2.5 Flash Image로 생성된 합장 변주들.
           <br />
-          마음에 드는 ID(v01~v10)를 알려주시면 홈 메인 이미지로 적용합니다.
+          <span className="text-foreground">Series W</span>는 선호 4장(v01·v02·v04·v05) 특징을 살린 8장입니다.
           <br />
-          <span className="text-foreground-dim/70">탭하여 큰 미리보기를 볼 수 있어요.</span>
+          <span className="text-foreground-dim/70">탭하여 큰 미리보기 → 마음에 드는 ID 알려주세요.</span>
+        </p>
+      </section>
+
+      {/* ===== Series W (선호 변주) ===== */}
+      <section className="px-5 max-w-3xl mx-auto w-full">
+        <div className="flex items-baseline justify-between mb-3">
+          <p className="label-upper text-foreground">Series W · 시그니처 톤 변주</p>
+          <p className="label-tag">8 photos</p>
+        </div>
+        <p className="text-[12px] text-foreground-dim mb-4 leading-relaxed">
+          어두운 배경 + 따뜻한 사이드 라이팅 + 손 중심 — 선호 4장 DNA 그대로.
+        </p>
+      </section>
+
+      <section className="px-5 pb-8 max-w-3xl mx-auto w-full grid grid-cols-2 gap-3">
+        {VARIANTS_W.map(v => (
+          <button
+            key={v.id}
+            onClick={() => {
+              setActive(v.id)
+              setPreview(v.id)
+            }}
+            className={`group relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#0a0604] transition-all active:scale-[0.98] ${
+              active === v.id ? 'ring-2 ring-accent' : 'ring-1 ring-transparent hover:ring-foreground/20'
+            }`}
+          >
+            <Image
+              src={`/images/hero/lab/anjali-${v.id}.webp`}
+              alt={v.label}
+              fill
+              sizes="(max-width: 640px) 50vw, 280px"
+              className="object-cover"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 mix-blend-multiply pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(196, 86, 36, 0.18) 0%, rgba(40, 18, 10, 0.28) 100%)',
+                opacity: 0.7,
+              }}
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(180deg, transparent 0%, transparent 55%, rgba(0,0,0,0.85) 100%)',
+              }}
+            />
+            <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
+              <div className="flex items-center gap-1.5">
+                <p className="label-tag text-foreground/90">{v.id}</p>
+                <p className="label-tag text-accent/80">{v.category}</p>
+              </div>
+              {active === v.id && (
+                <span className="label-tag text-accent">Selected</span>
+              )}
+            </div>
+            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
+              <div className="text-left min-w-0">
+                <p className="text-foreground text-[12px] tracking-tight font-medium leading-tight truncate">
+                  {v.label}
+                </p>
+                <p className="label-tag mt-0.5 text-[8px]">{v.sub}</p>
+              </div>
+              <div className="shrink-0 w-7 h-7 rounded-full border border-foreground/40 flex items-center justify-center">
+                <Play size={9} strokeWidth={1.5} fill="currentColor" className="text-foreground translate-x-[1px]" />
+              </div>
+            </div>
+          </button>
+        ))}
+      </section>
+
+      {/* ===== Series V (원본 10장) ===== */}
+      <section className="px-5 max-w-3xl mx-auto w-full pt-4 border-t border-[var(--surface-border)]">
+        <div className="flex items-baseline justify-between mb-3">
+          <p className="label-upper text-foreground">Series V · 다양한 톤</p>
+          <p className="label-tag">10 photos</p>
+        </div>
+        <p className="text-[12px] text-foreground-dim mb-4 leading-relaxed">
+          원본 10장 시리즈. 다양한 시간대/톤/각도 변주.
         </p>
       </section>
 
@@ -199,7 +292,7 @@ export default function HeroPhotosLab() {
             </div>
 
             <div className="mt-4 text-center space-y-2">
-              <p className="label-upper text-foreground">{preview} · {VARIANTS.find(v => v.id === preview)?.label}</p>
+              <p className="label-upper text-foreground">{preview} · {[...VARIANTS, ...VARIANTS_W].find(v => v.id === preview)?.label}</p>
               <p className="text-[12px] text-foreground-dim">
                 실제 홈에 적용 시 모습입니다.<br />
                 마음에 들면 대화창에 <span className="text-foreground">&quot;{preview}로 적용&quot;</span> 입력해주세요.
