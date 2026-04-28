@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Copy, Share2, Hand, Timer, BookOpen, Flame, LogOut } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { ArrowLeft, Copy, Share2, Hand, Timer, BookOpen, Flame, LogOut, Check } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import { getGroupDashboard, sendReaction, leaveGroup, buildInviteLink, getOrCreateProfile, updateProfile } from '@/lib/group-store'
 import { AVATAR_EMOJIS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import { MoodBackdrop } from '@/components/mood-backdrop'
 import type { GroupWithStats, GroupMemberStatus } from '@/types'
 
 export default function GroupDashboardPage() {
@@ -46,6 +45,7 @@ export default function GroupDashboardPage() {
       })
     }
     if (!loading && !user) router.push('/doban')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading])
 
   const handleCopy = async () => {
@@ -60,7 +60,7 @@ export default function GroupDashboardPage() {
     if (!group) return
     const link = buildInviteLink(group.invite_code)
     if (navigator.share) {
-      await navigator.share({ title: `${group.name} - 하루수행 도반`, text: `함께 수행해요!\n초대코드: ${group.invite_code}`, url: link })
+      await navigator.share({ title: `${group.name} · 하루수행 도반`, text: `함께 수행해요\n초대 코드: ${group.invite_code}`, url: link })
     } else {
       handleCopy()
     }
@@ -73,7 +73,7 @@ export default function GroupDashboardPage() {
       await sendReaction(user.id, groupId, toUserId)
       await fetchDashboard()
     } catch (e) {
-      alert(e instanceof Error ? e.message : '합장 실패')
+      alert(e instanceof Error ? e.message : '응원 실패')
     }
     setReactingTo(null)
   }
@@ -95,132 +95,187 @@ export default function GroupDashboardPage() {
   }
 
   if (fetching) {
-    return <div className="px-5 py-12 text-center text-muted/40">불러오는 중...</div>
+    return (
+      <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
+        <MoodBackdrop mood="amber" />
+        <p className="px-5 py-12 text-center label-tag">불러오는 중...</p>
+      </div>
+    )
   }
 
   if (!group) return null
 
   return (
-    <div className="px-5 py-8 space-y-6">
+    <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
+      <MoodBackdrop mood="amber" />
+
       {/* 헤더 */}
-      <div className="flex items-center justify-between animate-in">
-        <button onClick={() => router.push('/doban')} className="flex items-center gap-1 text-muted/50 hover:text-foreground transition-colors">
-          <ArrowLeft size={18} />
-          <span className="text-sm">돌아가기</span>
+      <header className="flex items-center justify-between px-5 pt-5 pb-4">
+        <button
+          onClick={() => router.push('/doban')}
+          aria-label="뒤로"
+          className="p-2 -ml-2 text-foreground-dim hover:text-foreground transition-colors"
+        >
+          <ArrowLeft size={18} strokeWidth={1.5} />
         </button>
-        <button onClick={() => setShowProfile(!showProfile)} className="text-sm text-accent font-medium">
-          내 프로필
+        <p className="label-upper truncate max-w-[60%]">{group.name}</p>
+        <button
+          onClick={() => setShowProfile(!showProfile)}
+          className="text-[11px] text-accent hover:text-accent-light transition-colors uppercase tracking-[0.18em]"
+        >
+          Profile
         </button>
-      </div>
+      </header>
 
       {/* 프로필 편집 */}
       {showProfile && (
-        <Card variant="glass" className="space-y-3 animate-in">
-          <h3 className="text-sm font-bold text-foreground">프로필 설정</h3>
-          <div className="flex flex-wrap gap-2">
-            {AVATAR_EMOJIS.map(e => (
-              <button
-                key={e}
-                onClick={() => setProfileEmoji(e)}
-                className={cn(
-                  'w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all',
-                  profileEmoji === e ? 'bg-accent/15 ring-1 ring-accent/30' : 'hover:bg-card-bg'
-                )}
-              >
-                {e}
-              </button>
-            ))}
+        <section className="px-5 mb-6 animate-in">
+          <div className="surface-paper rounded-2xl p-5 space-y-3">
+            <p className="label-upper">프로필 설정</p>
+            <div className="flex flex-wrap gap-1.5">
+              {AVATAR_EMOJIS.map(e => (
+                <button
+                  key={e}
+                  onClick={() => setProfileEmoji(e)}
+                  className={cn(
+                    'w-10 h-10 rounded-xl text-xl flex items-center justify-center transition-all',
+                    profileEmoji === e
+                      ? 'bg-foreground text-background'
+                      : 'hover:bg-[var(--surface-hover)]',
+                  )}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+            <input
+              type="text"
+              value={profileName}
+              onChange={e => setProfileName(e.target.value)}
+              maxLength={10}
+              placeholder="법명 또는 별명"
+              className="w-full px-4 py-3 rounded-xl text-[14px] text-foreground placeholder:text-muted/50 bg-[var(--surface)] border border-[var(--surface-border)] focus:outline-none focus:border-[var(--accent-glow)] transition-colors"
+            />
+            <button
+              onClick={handleSaveProfile}
+              disabled={!profileName.trim()}
+              className="w-full py-3 rounded-full bg-foreground text-background text-[13px] tracking-wide active:scale-[0.98] transition-all disabled:opacity-30"
+            >
+              저장
+            </button>
           </div>
-          <input
-            type="text"
-            value={profileName}
-            onChange={e => setProfileName(e.target.value)}
-            maxLength={10}
-            placeholder="법명 또는 별명"
-            className="w-full px-4 py-3 glass rounded-xl text-sm text-foreground placeholder:text-muted/40 focus:outline-none focus:border-accent/30"
-          />
-          <Button variant="gradient" size="sm" className="w-full" onClick={handleSaveProfile}>저장</Button>
-        </Card>
+        </section>
       )}
 
       {/* 그룹 정보 */}
-      <Card variant="glass" className="space-y-3 animate-in stagger-1">
-        <h2 className="text-lg font-bold gradient-text">{group.name}</h2>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted/50">초대코드:</span>
-          <span className="font-mono text-sm text-accent tracking-wider">{group.invite_code}</span>
-          <button onClick={handleCopy} className="text-muted/40 hover:text-foreground transition-colors">
-            <Copy size={14} />
+      <section className="px-5 pb-6 animate-in stagger-1">
+        <p className="label-tag mb-2">Fellowship</p>
+        <h1 className="text-foreground text-[26px] tracking-tight font-medium mb-3">
+          {group.name}
+        </h1>
+        <div className="flex items-center gap-3 surface-subtle rounded-xl px-4 py-3">
+          <p className="label-tag">Invite</p>
+          <p className="font-mono text-[13px] text-accent tracking-[0.25em] flex-1">
+            {group.invite_code}
+          </p>
+          <button
+            onClick={handleCopy}
+            aria-label="초대 코드 복사"
+            className="p-1.5 text-foreground-dim hover:text-foreground transition-colors"
+          >
+            {copied ? <Check size={13} className="text-success" /> : <Copy size={13} strokeWidth={1.5} />}
           </button>
-          <button onClick={handleShare} className="text-muted/40 hover:text-foreground transition-colors">
-            <Share2 size={14} />
+          <button
+            onClick={handleShare}
+            aria-label="공유"
+            className="p-1.5 text-foreground-dim hover:text-foreground transition-colors"
+          >
+            <Share2 size={13} strokeWidth={1.5} />
           </button>
-          {copied && <span className="text-[11px] text-success font-medium">복사됨!</span>}
         </div>
-      </Card>
+      </section>
 
       {/* 멤버 리스트 */}
-      <div className="space-y-3 animate-in stagger-2">
-        <h2 className="text-xs font-semibold text-muted uppercase tracking-widest px-1">
-          오늘의 수행 현황 · {members.length}명
-        </h2>
-        {members.map(m => {
-          const completedCount = [m.today_bae108, m.today_meditation, m.today_yeobul].filter(Boolean).length
-          const isMe = m.user_id === user?.id
+      <section className="px-5 pb-8 animate-in stagger-2">
+        <div className="flex items-baseline justify-between mb-4">
+          <p className="label-upper">Today&apos;s Practice</p>
+          <p className="label-tag">{members.length} members</p>
+        </div>
 
-          return (
-            <Card key={m.user_id} variant="glass" className={cn(isMe && 'ring-1 ring-accent/20')}>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{m.avatar_emoji}</span>
+        <ul className="space-y-0">
+          {members.map(m => {
+            const completedCount = [m.today_bae108, m.today_meditation, m.today_yeobul].filter(Boolean).length
+            const isMe = m.user_id === user?.id
+
+            return (
+              <li
+                key={m.user_id}
+                className={cn(
+                  'flex items-center gap-3 py-4 border-b border-[var(--surface-border)]',
+                  isMe && 'bg-[var(--surface)] -mx-2 px-2 rounded-lg',
+                )}
+              >
+                <div className="w-11 h-11 rounded-full bg-[var(--surface-strong)] flex items-center justify-center text-xl shrink-0">
+                  {m.avatar_emoji}
+                </div>
+
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-foreground text-sm truncate">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-foreground text-[14px] tracking-tight truncate">
                       {m.display_name}
-                      {isMe && <span className="text-xs text-muted/40 ml-1">(나)</span>}
-                    </span>
+                    </p>
+                    {isMe && (
+                      <span className="label-tag text-foreground-dim">(나)</span>
+                    )}
                     {m.streak > 0 && (
-                      <span className="flex items-center gap-0.5 text-[11px] text-accent">
-                        <Flame size={12} />
-                        {m.streak}일
+                      <span className="flex items-center gap-0.5 text-[10px] text-accent">
+                        <Flame size={10} strokeWidth={2} />
+                        {m.streak}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2.5 mt-1.5">
-                    <Hand size={15} className={m.today_bae108 ? 'text-success' : 'text-muted/20'} />
-                    <Timer size={15} className={m.today_meditation ? 'text-success' : 'text-muted/20'} />
-                    <BookOpen size={15} className={m.today_yeobul ? 'text-success' : 'text-muted/20'} />
-                    <span className="text-xs text-muted/40 ml-1">{completedCount}/3</span>
+                  <div className="flex items-center gap-2.5">
+                    <Hand size={13} className={m.today_bae108 ? 'text-success' : 'text-muted-deep'} strokeWidth={1.5} />
+                    <Timer size={13} className={m.today_meditation ? 'text-success' : 'text-muted-deep'} strokeWidth={1.5} />
+                    <BookOpen size={13} className={m.today_yeobul ? 'text-success' : 'text-muted-deep'} strokeWidth={1.5} />
+                    <span className="label-tag">{completedCount}/3</span>
                   </div>
                 </div>
+
                 {!isMe && (
                   <button
                     onClick={() => handleReaction(m.user_id)}
                     disabled={m.has_reacted || reactingTo === m.user_id}
+                    aria-label="응원 보내기"
                     className={cn(
-                      'flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-all',
-                      m.has_reacted ? 'opacity-30' : 'hover:bg-accent/10 active:scale-95'
+                      'flex flex-col items-center gap-0.5 px-2.5 py-1.5 rounded-xl transition-all',
+                      m.has_reacted
+                        ? 'opacity-30 cursor-not-allowed'
+                        : 'hover:bg-[var(--surface-hover)] active:scale-95',
                     )}
                   >
-                    <span className="text-xl">🙏</span>
+                    <span className="text-lg">🙏</span>
                     {m.reactions_received > 0 && (
-                      <span className="text-[10px] text-accent">{m.reactions_received}</span>
+                      <span className="text-[9px] text-accent tabular-nums">{m.reactions_received}</span>
                     )}
                   </button>
                 )}
-              </div>
-            </Card>
-          )
-        })}
-      </div>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
 
       {/* 그룹 탈퇴 */}
-      <button
-        onClick={handleLeave}
-        className="flex items-center gap-1.5 mx-auto text-sm text-danger/60 hover:text-danger transition-colors py-4"
-      >
-        <LogOut size={14} />
-        {group.owner_id === user?.id ? '그룹 삭제' : '그룹 탈퇴'}
-      </button>
+      <div className="px-5 pb-8 mt-auto">
+        <button
+          onClick={handleLeave}
+          className="flex items-center gap-1.5 mx-auto text-[12px] text-danger/70 hover:text-danger transition-colors py-3"
+        >
+          <LogOut size={12} strokeWidth={1.5} />
+          {group.owner_id === user?.id ? '그룹 삭제' : '그룹 탈퇴'}
+        </button>
+      </div>
     </div>
   )
 }
