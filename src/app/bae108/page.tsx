@@ -7,9 +7,10 @@ import { getSoundGenerator, playCountSound, COUNT_SOUNDS, type CountSoundId } fr
 import { useAuth } from '@/lib/auth-context'
 import { savePractice } from '@/lib/practice-store'
 import { BAE_TARGET } from '@/lib/constants'
-import { ArrowLeft, RotateCcw, Music, Play } from 'lucide-react'
+import { ArrowLeft, RotateCcw, Music, Play, Activity } from 'lucide-react'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { BottomSheet, OptionRow } from '@/components/bottom-sheet'
+import { cn } from '@/lib/utils'
 
 const STORAGE_KEY = 'haru-bae108-sound'
 
@@ -28,6 +29,8 @@ export default function Bae108Page() {
   const startTimeRef = useRef(0)
   const [soundId, setSoundId] = useState<CountSoundId>('moktak')
   const [showSoundSheet, setShowSoundSheet] = useState(false)
+  const [autoMode, setAutoMode] = useState(false)
+  const [autoError, setAutoError] = useState<string | null>(null)
 
   // localStorage에서 사운드 설정 로드
   useEffect(() => {
@@ -70,6 +73,70 @@ export default function Bae108Page() {
     setSaved(false)
   }
 
+  // 자동 모드 활성화 (iOS 권한 요청 포함)
+  const enableAutoMode = useCallback(async () => {
+    setAutoError(null)
+    if (typeof window === 'undefined' || typeof DeviceOrientationEvent === 'undefined') {
+      setAutoError('이 기기는 방향 센서를 지원하지 않습니다')
+      return
+    }
+    type DOEWithPerm = typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<'granted' | 'denied'>
+    }
+    const DOE = DeviceOrientationEvent as DOEWithPerm
+    if (typeof DOE.requestPermission === 'function') {
+      try {
+        const state = await DOE.requestPermission()
+        if (state !== 'granted') {
+          setAutoError('센서 권한이 거부되었습니다')
+          return
+        }
+      } catch {
+        setAutoError('센서 권한 요청에 실패했습니다')
+        return
+      }
+    }
+    setAutoMode(true)
+  }, [])
+
+  // handleCount의 최신 참조 유지 (deps 폭주 방지)
+  const handleCountRef = useRef(handleCount)
+  useEffect(() => {
+    handleCountRef.current = handleCount
+  }, [handleCount])
+
+  // 방향 센서 리스너 — 자동 모드 활성 시
+  useEffect(() => {
+    if (!autoMode) return
+
+    let phase: 'standing' | 'bowing' | 'cooldown' = 'standing'
+    let lastTrigger = 0
+
+    function onOrientation(e: DeviceOrientationEvent) {
+      const beta = e.beta ?? 0  // 앞뒤 기울기 (-180 ~ 180)
+      const absBeta = Math.abs(beta)
+
+      if (phase === 'standing' && absBeta > 65) {
+        // 절 시작
+        phase = 'bowing'
+      } else if (phase === 'bowing' && absBeta < 25) {
+        // 절 끝나고 일어남
+        const now = Date.now()
+        if (now - lastTrigger > 800) {
+          handleCountRef.current()
+          lastTrigger = now
+        }
+        phase = 'cooldown'
+        setTimeout(() => {
+          if (phase === 'cooldown') phase = 'standing'
+        }, 500)
+      }
+    }
+
+    window.addEventListener('deviceorientation', onOrientation)
+    return () => window.removeEventListener('deviceorientation', onOrientation)
+  }, [autoMode])
+
   const currentSound = COUNT_SOUNDS.find(s => s.id === soundId)!
 
   return (
@@ -87,6 +154,20 @@ export default function Bae108Page() {
         </Link>
         <p className="label-upper">108 Bows</p>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => {
+              if (autoMode) setAutoMode(false)
+              else enableAutoMode()
+            }}
+            aria-label="자동 카운트 토글"
+            title={autoMode ? '자동 모드 ON' : '자동 카운트 활성화'}
+            className={cn(
+              'p-2 transition-colors',
+              autoMode ? 'text-accent' : 'text-foreground-dim hover:text-foreground',
+            )}
+          >
+            <Activity size={16} strokeWidth={1.5} />
+          </button>
           <button
             onClick={() => setShowSoundSheet(true)}
             aria-label="사운드 선택"
@@ -122,6 +203,30 @@ export default function Bae108Page() {
           {currentSound.name}
         </button>
       </section>
+
+      {/* 자동 모드 안내 / 오류 */}
+      {autoMode && (
+        <div className="px-5 pb-2 animate-in">
+          <div className="surface-paper rounded-2xl px-4 py-3 flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <div className="flex-1 min-w-0">
+              <p className="text-foreground text-[12px] tracking-tight">
+                Auto · 절하면 자동으로 카운트
+              </p>
+              <p className="label-tag mt-0.5">
+                폰을 가슴 주머니에 두거나 손에 쥐고 절하세요
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {autoError && (
+        <div className="px-5 pb-2 animate-in">
+          <p className="text-danger text-[12px] tracking-tight">
+            ⚠ {autoError}
+          </p>
+        </div>
+      )}
 
       {/* 카운터 */}
       <section className="flex-1 flex items-center justify-center px-5 animate-in stagger-1">
