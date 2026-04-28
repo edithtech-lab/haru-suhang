@@ -6,7 +6,16 @@ class SoundGenerator {
 
   private getContext(): AudioContext {
     if (!this.ctx) {
-      this.ctx = new AudioContext()
+      // iOS Safari 호환 (webkitAudioContext fallback)
+      const Ctx =
+        window.AudioContext ||
+        ((window as unknown) as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      this.ctx = new Ctx()
+    }
+    // 모바일 브라우저는 user gesture 후에만 resume 가능
+    // (suspended 상태로 시작하므로 명시적 호출 필요)
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(() => {})
     }
     return this.ctx
   }

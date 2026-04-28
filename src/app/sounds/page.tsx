@@ -37,10 +37,16 @@ export default function SoundsPage() {
   const [remaining, setRemaining] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // 전역 오디오 컨텍스트 준비
+  // 전역 오디오 컨텍스트 준비 (모바일 brwoser는 user gesture 후 resume 필수)
   function getCtx() {
     if (!ctxRef.current) {
-      ctxRef.current = new AudioContext()
+      const Ctx =
+        window.AudioContext ||
+        ((window as unknown) as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      ctxRef.current = new Ctx()
+    }
+    if (ctxRef.current.state === 'suspended') {
+      ctxRef.current.resume().catch(() => {})
     }
     return ctxRef.current
   }

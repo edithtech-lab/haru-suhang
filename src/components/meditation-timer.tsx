@@ -92,7 +92,11 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
     if (selectedSound) {
       const sound = AMBIENT_SOUNDS.find(s => s.id === selectedSound)
       if (sound) {
-        const ctx = new AudioContext()
+        const Ctx =
+          window.AudioContext ||
+          ((window as unknown) as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        const ctx = new Ctx()
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {})
         audioCtxRef.current = ctx
         const { node, stop } = sound.create(ctx)
         node.connect(ctx.destination)

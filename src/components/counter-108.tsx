@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { BAE_TARGET } from '@/lib/constants'
 import { Mandala } from '@/components/mandala'
@@ -11,16 +11,22 @@ interface Counter108Props {
   completed: boolean
 }
 
+// onClick + onTouchStart 중복 + 빠른 연속 탭 방지
+const TAP_COOLDOWN_MS = 350
+
 export function Counter108({ count, onCount, completed }: Counter108Props) {
   const [pressing, setPressing] = useState(false)
+  const lastTapRef = useRef(0)
   const progress = count / BAE_TARGET
 
   const handleInteraction = useCallback(() => {
-    if (!completed) {
-      setPressing(true)
-      onCount()
-      setTimeout(() => setPressing(false), 120)
-    }
+    if (completed) return
+    const now = Date.now()
+    if (now - lastTapRef.current < TAP_COOLDOWN_MS) return
+    lastTapRef.current = now
+    setPressing(true)
+    onCount()
+    setTimeout(() => setPressing(false), 120)
   }, [completed, onCount])
 
   return (

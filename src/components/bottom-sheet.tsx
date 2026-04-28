@@ -56,10 +56,10 @@ interface OptionRowProps {
  */
 export function OptionRow({ label, description, selected, onClick, trailing }: OptionRowProps) {
   return (
-    <div className="w-full flex items-center justify-between py-4 border-b border-[var(--surface-border)] -mx-5 px-5">
+    <div className="w-full flex items-center py-4 border-b border-[var(--surface-border)] -mx-5 pl-5 pr-3 gap-3">
       <button
         onClick={onClick}
-        className="flex-1 text-left flex items-center justify-between gap-3 hover:bg-[var(--surface-hover)] -mx-3 px-3 py-1 rounded-lg transition-colors"
+        className="flex-1 min-w-0 text-left flex items-center justify-between gap-3 hover:bg-[var(--surface-hover)] -mx-2 px-2 py-1 rounded-lg transition-colors"
       >
         <div className="flex-1 min-w-0">
           <p className="text-foreground text-[15px] tracking-tight">{label}</p>
@@ -67,9 +67,9 @@ export function OptionRow({ label, description, selected, onClick, trailing }: O
             <p className="label-tag mt-0.5 truncate">{description}</p>
           )}
         </div>
-        {selected && <Check size={16} className="text-foreground" strokeWidth={1.8} />}
+        {selected && <Check size={16} className="text-foreground shrink-0" strokeWidth={1.8} />}
       </button>
-      {trailing && <div className="ml-2 shrink-0">{trailing}</div>}
+      {trailing && <div className="shrink-0">{trailing}</div>}
     </div>
   )
 }
