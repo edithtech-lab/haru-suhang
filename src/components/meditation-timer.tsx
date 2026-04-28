@@ -18,8 +18,9 @@ type Phase = 'select' | 'running' | 'completed'
 type BreathPhase = 'in' | 'out'
 
 const START_END_OPTIONS = [
-  { id: 'bell', label: 'Bell', description: '범종' },
-  { id: 'bowl', label: 'Bowl', description: '싱잉볼' },
+  { id: 'bell', label: 'Temple Bell', description: '사찰 범종' },
+  { id: 'bowl', label: 'Singing Bowl', description: '싱잉볼 (긴 울림)' },
+  { id: 'chime', label: 'Chime', description: '풍경 차임' },
   { id: 'silent', label: 'None', description: '무음' },
 ] as const
 
@@ -70,14 +71,26 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
 
   const playStartSound = () => {
     if (startEnd === 'silent') return
-    if (startEnd === 'bell') getSoundGenerator().playBell(1)
-    // bowl은 기본 ambient bowl 사운드 1번 트리거 — 단순화: bell로 대체
-    if (startEnd === 'bowl') getSoundGenerator().playBell(1)
+    const gen = getSoundGenerator()
+    if (startEnd === 'bell') gen.playBell(1)
+    else if (startEnd === 'bowl') gen.playLongSingingBowl()
+    else if (startEnd === 'chime') gen.playChime()
   }
 
   const playEndSound = () => {
     if (startEnd === 'silent') return
-    getSoundGenerator().playBell(3)
+    const gen = getSoundGenerator()
+    if (startEnd === 'bell') gen.playBell(3)
+    else if (startEnd === 'bowl') {
+      gen.playLongSingingBowl()
+      setTimeout(() => gen.playLongSingingBowl(), 4000)
+      setTimeout(() => gen.playLongSingingBowl(), 8000)
+    }
+    else if (startEnd === 'chime') {
+      gen.playChime()
+      setTimeout(() => gen.playChime(), 800)
+      setTimeout(() => gen.playChime(), 1600)
+    }
   }
 
   const startMeditation = useCallback(() => {
