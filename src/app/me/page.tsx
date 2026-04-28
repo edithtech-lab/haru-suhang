@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ChevronRight, LogIn, LogOut } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
+import { getOrCreateProfile } from '@/lib/group-store'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 
 interface MenuItem {
@@ -43,11 +45,21 @@ const MENU: MenuItem[] = [
 export default function MePage() {
   const router = useRouter()
   const { user, loading, signOut } = useAuth()
+  const [displayName, setDisplayName] = useState<string | null>(null)
 
-  const userName =
+  useEffect(() => {
+    if (user) {
+      getOrCreateProfile(user.id)
+        .then(p => setDisplayName(p.display_name))
+        .catch(() => setDisplayName(null))
+    }
+  }, [user])
+
+  const fallbackName =
     user?.user_metadata?.full_name?.split(' ')[0] ||
     user?.email?.split('@')[0] ||
     null
+  const userName = displayName || fallbackName
 
   return (
     <div className="min-h-[calc(100dvh-5rem)] flex flex-col">
@@ -70,7 +82,7 @@ export default function MePage() {
       <section className="px-5 pb-8 animate-in">
         <p className="label-tag mb-2">My Space</p>
         <h1 className="text-foreground text-[28px] tracking-tight font-medium">
-          {userName ? `${userName}님` : '내 공간'}
+          {userName ? `${userName} 수행자님` : '내 공간'}
         </h1>
         {user ? (
           <p className="label-tag mt-2 truncate">{user.email}</p>

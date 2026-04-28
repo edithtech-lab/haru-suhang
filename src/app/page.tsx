@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Play, Search, Check, LogIn, LogOut } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
 import { getTodayStatus, getPracticeStats } from '@/lib/practice-store'
+import { getOrCreateProfile } from '@/lib/group-store'
 import { DAILY_WISDOMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
@@ -122,7 +123,24 @@ export default function HomePage() {
   const todayWisdom = DAILY_WISDOMS[new Date().getDate() % DAILY_WISDOMS.length]
   const greeting = getGreeting()
   const timeMessage = getTimeMessage()
-  const userName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || '수행자'
+  const [displayName, setDisplayName] = useState<string | null>(null)
+
+  // 로그인 시 user_profiles에서 표시 이름 가져오기
+  useEffect(() => {
+    if (user) {
+      getOrCreateProfile(user.id)
+        .then(p => setDisplayName(p.display_name))
+        .catch(() => setDisplayName(null))
+    } else {
+      setDisplayName(null)
+    }
+  }, [user])
+
+  const fallbackName =
+    user?.user_metadata?.full_name?.split(' ')[0] ||
+    user?.email?.split('@')[0] ||
+    null
+  const userName = displayName || fallbackName
 
   useEffect(() => {
     if (!loading) {
@@ -147,7 +165,9 @@ export default function HomePage() {
           <p className="text-[13px] text-foreground-dim">
             {greeting},
             <br />
-            <span className="text-foreground">{userName}</span>
+            <span className="text-foreground">
+              {userName ? `${userName} 수행자님` : '수행자'}
+            </span>
           </p>
         </div>
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ChevronRight } from 'lucide-react'
 import { useAuth } from '@/lib/auth-context'
+import { getOrCreateProfile, updateProfile } from '@/lib/group-store'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { BottomSheet, OptionRow } from '@/components/bottom-sheet'
 import { COUNT_SOUNDS, playCountSound, type CountSoundId } from '@/components/audio-player'
@@ -41,6 +42,11 @@ export default function SettingsPage() {
   const [reminder, setReminder] = useState(false)
   const [fellowshipNotify, setFellowshipNotify] = useState(true)
 
+  // 이름 (display_name)
+  const [displayName, setDisplayName] = useState<string>('')
+  const [showNameSheet, setShowNameSheet] = useState(false)
+  const [nameInput, setNameInput] = useState('')
+
   useEffect(() => {
     if (typeof window === 'undefined') return
     const saved = localStorage.getItem(SOUND_KEY)
@@ -51,6 +57,29 @@ export default function SettingsPage() {
     setReminder(loadBool(REMINDER_KEY, false))
     setFellowshipNotify(loadBool(FELLOWSHIP_NOTIFY_KEY, true))
   }, [])
+
+  // 이름 로드
+  useEffect(() => {
+    if (user) {
+      getOrCreateProfile(user.id)
+        .then(p => setDisplayName(p.display_name))
+        .catch(() => setDisplayName(''))
+    }
+  }, [user])
+
+  const handleSaveName = async () => {
+    if (!user) return
+    const trimmed = nameInput.trim()
+    if (!trimmed || trimmed.length > 10) return
+    try {
+      await updateProfile(user.id, { display_name: trimmed })
+      setDisplayName(trimmed)
+      setShowNameSheet(false)
+      setNameInput('')
+    } catch (e) {
+      alert(e instanceof Error ? e.message : '이름 저장 실패')
+    }
+  }
 
   const handleSelectSound = (id: CountSoundId) => {
     setCountSound(id)
@@ -140,6 +169,12 @@ export default function SettingsPage() {
           <p className="label-upper mb-3">Account</p>
           <ul>
             <SettingRow
+              label="수행자명"
+              sub="홈에서 ㅇㅇㅇ 수행자님 으로 표시됩니다"
+              value={displayName || '미설정'}
+              onClick={() => { setNameInput(displayName); setShowNameSheet(true) }}
+            />
+            <SettingRow
               label="이메일"
               value={user.email ?? '—'}
               readonly
@@ -176,6 +211,33 @@ export default function SettingsPage() {
           <SettingRow label="피드백 보내기" onClick={() => alert('피드백은 edithtech@edithtech.co.kr로 부탁드립니다')} />
         </ul>
       </section>
+
+      {/* 이름 변경 모달 */}
+      {showNameSheet && (
+        <BottomSheet title="수행자명" onClose={() => setShowNameSheet(false)}>
+          <div className="space-y-4 pb-2">
+            <p className="label-tag">홈 화면과 도반 그룹에 표시됩니다</p>
+            <input
+              type="text"
+              value={nameInput}
+              onChange={e => setNameInput(e.target.value)}
+              placeholder="법명 또는 별명"
+              maxLength={10}
+              autoFocus
+              onKeyDown={e => { if (e.key === 'Enter') handleSaveName() }}
+              className="w-full px-4 py-3 rounded-xl text-[15px] text-foreground placeholder:text-muted/50 bg-[var(--surface)] border border-[var(--surface-border)] focus:outline-none focus:border-[var(--accent-glow)] transition-colors"
+            />
+            <p className="label-tag text-right">{nameInput.length} / 10</p>
+            <button
+              onClick={handleSaveName}
+              disabled={!nameInput.trim()}
+              className="w-full py-3.5 rounded-full bg-foreground text-background text-[14px] tracking-wide active:scale-[0.98] transition-all disabled:opacity-30"
+            >
+              저장
+            </button>
+          </div>
+        </BottomSheet>
+      )}
 
       {/* 사운드 선택 모달 */}
       {showSoundSheet && (
