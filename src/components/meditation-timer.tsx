@@ -33,6 +33,19 @@ export function MeditationTimer({ onComplete }: MeditationTimerProps) {
   const [remaining, setRemaining] = useState(0)
   const [breathPhase, setBreathPhase] = useState<BreathPhase>('in')
   const [selectedSound, setSelectedSound] = useState<string | null>(null)
+
+  // /meditation?duration=300 같은 쿼리 파라미터로 자동 설정
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const dur = params.get('duration')
+    if (dur) {
+      const n = parseInt(dur, 10)
+      if (!isNaN(n) && n >= 60 && n <= 7200) {
+        setTotalSeconds(n)
+      }
+    }
+  }, [])
   const [startEnd, setStartEnd] = useState<StartEndOption>('bell')
   const [modal, setModal] = useState<ModalKind>(null)
   const [showTime, setShowTime] = useState(false)

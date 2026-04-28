@@ -37,6 +37,22 @@ export default function Bae108Page() {
     setSoundId(loadSound())
   }, [])
 
+  // /bae108?theme=morning|evening|gratitude|wish 쿼리 처리
+  const [theme, setTheme] = useState<string | null>(null)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const t = params.get('theme')
+    if (t && ['morning', 'evening', 'gratitude', 'wish'].includes(t)) setTheme(t)
+  }, [])
+
+  const themeMeta = theme ? {
+    morning: { label: '새벽 108배', sub: '하루를 여는 절' },
+    evening: { label: '저녁 108배', sub: '하루를 닫는 절' },
+    gratitude: { label: '감사 108배', sub: '은혜에 답하며' },
+    wish: { label: '발원 108배', sub: '서원을 세우며' },
+  }[theme] : null
+
   const handleSelectSound = (id: CountSoundId) => {
     setSoundId(id)
     try {
@@ -192,9 +208,11 @@ export default function Bae108Page() {
       <section className="px-5 pb-2 animate-in flex items-baseline justify-between">
         <div>
           <h1 className="text-foreground text-[26px] tracking-tight font-medium">
-            108배
+            {themeMeta?.label ?? '108배'}
           </h1>
-          <p className="label-tag mt-1">한 절 한 절, 마음을 내려놓으세요</p>
+          <p className="label-tag mt-1">
+            {themeMeta?.sub ?? '한 절 한 절, 마음을 내려놓으세요'}
+          </p>
         </div>
         <button
           onClick={() => setShowSoundSheet(true)}

@@ -40,23 +40,23 @@ const cardGradients = {
 }
 
 const CATEGORIES: Category[] = [
-  // 108배
-  { id: 'morning-108', title: '새벽 108배', subtitle: 'Morning Bow', duration: '15 min', href: '/bae108', gradient: cardGradients.amber, category: 'bae108' },
-  { id: 'evening-108', title: '저녁 108배', subtitle: 'Evening Reflection', duration: '15 min', href: '/bae108', gradient: cardGradients.wine, category: 'bae108' },
-  { id: 'gratitude-108', title: '감사 108배', subtitle: 'Gratitude', duration: '15 min', href: '/bae108', gradient: cardGradients.sepia, category: 'bae108' },
-  { id: 'wish-108', title: '발원 108배', subtitle: 'Vow', duration: '15 min', href: '/bae108', gradient: cardGradients.olive, category: 'bae108' },
+  // 108배 — theme 파라미터로 안내 라벨 분기
+  { id: 'morning-108', title: '새벽 108배', subtitle: 'Morning Bow', duration: '15 min', href: '/bae108?theme=morning', gradient: cardGradients.amber, category: 'bae108' },
+  { id: 'evening-108', title: '저녁 108배', subtitle: 'Evening Reflection', duration: '15 min', href: '/bae108?theme=evening', gradient: cardGradients.wine, category: 'bae108' },
+  { id: 'gratitude-108', title: '감사 108배', subtitle: 'Gratitude', duration: '15 min', href: '/bae108?theme=gratitude', gradient: cardGradients.sepia, category: 'bae108' },
+  { id: 'wish-108', title: '발원 108배', subtitle: 'Vow', duration: '15 min', href: '/bae108?theme=wish', gradient: cardGradients.olive, category: 'bae108' },
 
-  // 명상
-  { id: 'short-meditation', title: '짧은 명상', subtitle: 'Quick Reset', duration: '5 min', href: '/meditation', gradient: cardGradients.indigo, category: 'meditation' },
-  { id: 'breath-meditation', title: '호흡 명상', subtitle: 'Breath Focus', duration: '15 min', href: '/meditation', gradient: cardGradients.navy, category: 'meditation' },
-  { id: 'loving-kindness', title: '자비 명상', subtitle: 'Loving-kindness', duration: '20 min', href: '/meditation', gradient: cardGradients.violet, category: 'meditation' },
-  { id: 'deep-meditation', title: '깊은 명상', subtitle: 'Deep Stillness', duration: '30 min', href: '/meditation', gradient: cardGradients.indigo, category: 'meditation' },
+  // 명상 — duration 자동 설정
+  { id: 'short-meditation', title: '짧은 명상', subtitle: 'Quick Reset', duration: '5 min', href: '/meditation?duration=300', gradient: cardGradients.indigo, category: 'meditation' },
+  { id: 'breath-meditation', title: '호흡 명상', subtitle: 'Breath Focus', duration: '15 min', href: '/meditation?duration=900', gradient: cardGradients.navy, category: 'meditation' },
+  { id: 'loving-kindness', title: '자비 명상', subtitle: 'Loving-kindness', duration: '20 min', href: '/meditation?duration=1200', gradient: cardGradients.violet, category: 'meditation' },
+  { id: 'deep-meditation', title: '깊은 명상', subtitle: 'Deep Stillness', duration: '30 min', href: '/meditation?duration=1800', gradient: cardGradients.indigo, category: 'meditation' },
 
-  // 염불
-  { id: 'banya', title: '반야심경', subtitle: '般若心經', duration: '5 min', href: '/yeomju', gradient: cardGradients.sepia, category: 'yeobul' },
-  { id: 'amita', title: '나무아미타불', subtitle: 'Amitabha', duration: '10 min', href: '/yeomju', gradient: cardGradients.amber, category: 'yeobul' },
-  { id: 'gwanseum', title: '관세음보살', subtitle: 'Avalokitesvara', duration: '10 min', href: '/yeomju', gradient: cardGradients.warm, category: 'yeobul' },
-  { id: 'om-mani', title: '옴마니반메훔', subtitle: 'Om Mani Padme Hum', duration: '7 min', href: '/yeomju', gradient: cardGradients.wine, category: 'yeobul' },
+  // 염불 — mantra 자동 선택
+  { id: 'banya', title: '반야심경', subtitle: '般若心經', duration: '5 min', href: '/yeomju?mode=dokgyeong&sutra=반야심경', gradient: cardGradients.sepia, category: 'yeobul' },
+  { id: 'amita', title: '나무아미타불', subtitle: 'Amitabha', duration: '10 min', href: '/yeomju?mantra=namu-amitabul', gradient: cardGradients.amber, category: 'yeobul' },
+  { id: 'gwanseum', title: '관세음보살', subtitle: 'Avalokitesvara', duration: '10 min', href: '/yeomju?mantra=namu-gwaneum', gradient: cardGradients.warm, category: 'yeobul' },
+  { id: 'om-mani', title: '옴마니반메훔', subtitle: 'Om Mani Padme Hum', duration: '7 min', href: '/yeomju?mantra=om-mani', gradient: cardGradients.wine, category: 'yeobul' },
 ]
 
 const TABS: { id: Tab; label: string }[] = [

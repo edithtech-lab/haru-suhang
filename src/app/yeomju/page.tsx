@@ -61,6 +61,18 @@ export default function YeomjuPage() {
     setCustomMantras(loadCustomMantras())
   }, [])
 
+  // /yeomju?mantra=...&mode=...&sutra=... 쿼리 파라미터 처리
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const m = params.get('mantra')
+    const mo = params.get('mode')
+    const su = params.get('sutra')
+    if (mo === 'dokgyeong' || mo === 'yeomju') setMode(mo)
+    if (m && MANTRAS.some(x => x.id === m)) setMantraId(m)
+    if (su && Object.keys(YEOBUL_SUTRAS).includes(su)) setSelectedSutra(su as SutraKey)
+  }, [])
+
   const allMantras = [
     ...MANTRAS.map(m => ({ ...m, isCustom: false })),
     ...customMantras.map(m => ({ ...m, isCustom: true })),
