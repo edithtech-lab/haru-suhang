@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Flame, Sparkles, BookOpen, Users } from 'lucide-react'
+import { Home, Flame, Sparkles, BookOpen, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: '/bae108', label: 'Practice', icon: Flame, matchPaths: ['/bae108', '/meditation', '/yeomju'] },
   { href: '/sutra', label: 'Sutras', icon: BookOpen },
   { href: '/wisdom', label: 'Wisdom', icon: Sparkles },
-  { href: '/doban', label: 'Dharma', icon: Users, matchPaths: ['/doban'] },
+  { href: '/me', label: 'Me', icon: User, matchPaths: ['/me', '/doban', '/calendar', '/journal', '/settings'] },
 ]
 
 export function BottomNav() {

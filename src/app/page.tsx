@@ -17,6 +17,47 @@ const PRACTICES = [
   { href: '/yeomju', label: '염불', english: 'Chant', duration: '10 min', key: 'yeobul' as const },
 ]
 
+// 시간대 × 요일 매트릭스 — 매번 들어올 때마다 다른 추천
+type RecommendedKey = 'bae108' | 'meditation' | 'yeobul'
+interface Recommendation {
+  key: RecommendedKey
+  label: string
+  english: string
+  duration: string
+  href: string
+}
+
+const RECOMMENDATIONS: Record<string, Recommendation> = {
+  'morning-108':       { key: 'bae108',     label: '새벽 108배',  english: 'Morning Bow',       duration: '15 min', href: '/bae108?theme=morning' },
+  'evening-108':       { key: 'bae108',     label: '저녁 108배',  english: 'Evening Reflection', duration: '15 min', href: '/bae108?theme=evening' },
+  'gratitude-108':     { key: 'bae108',     label: '감사 108배',  english: 'Gratitude',         duration: '15 min', href: '/bae108?theme=gratitude' },
+  'wish-108':          { key: 'bae108',     label: '발원 108배',  english: 'Vow',               duration: '15 min', href: '/bae108?theme=wish' },
+  'short-meditation':  { key: 'meditation', label: '짧은 명상',   english: 'Quick Reset',       duration: '5 min',  href: '/meditation?duration=300' },
+  'breath-meditation': { key: 'meditation', label: '호흡 명상',   english: 'Breath Focus',      duration: '15 min', href: '/meditation?duration=900' },
+  'loving-kindness':   { key: 'meditation', label: '자비 명상',   english: 'Loving-kindness',   duration: '20 min', href: '/meditation?duration=1200' },
+  'deep-meditation':   { key: 'meditation', label: '깊은 명상',   english: 'Deep Stillness',    duration: '30 min', href: '/meditation?duration=1800' },
+  'banya':             { key: 'yeobul',     label: '반야심경',    english: '般若心經',           duration: '5 min',  href: '/yeomju?mode=dokgyeong&sutra=반야심경' },
+  'amita':             { key: 'yeobul',     label: '나무아미타불', english: 'Amitabha',          duration: '10 min', href: '/yeomju?mantra=namu-amitabul' },
+  'gwanseum':          { key: 'yeobul',     label: '관세음보살',  english: 'Avalokitesvara',    duration: '10 min', href: '/yeomju?mantra=namu-gwaneum' },
+  'om-mani':           { key: 'yeobul',     label: '옴마니반메훔', english: 'Om Mani Padme Hum', duration: '7 min',  href: '/yeomju?mantra=om-mani' },
+}
+
+function getTodayRecommendation(): Recommendation {
+  const h = new Date().getHours()
+  const day = new Date().getDay() // 0=일~6=토
+  const isOdd = day % 2 === 1
+
+  let id: keyof typeof RECOMMENDATIONS
+  if (h < 9) id = isOdd ? 'morning-108' : 'breath-meditation'
+  else if (h < 12) id = isOdd ? 'short-meditation' : 'banya'
+  else if (h < 15) id = isOdd ? 'breath-meditation' : 'amita'
+  else if (h < 18) id = isOdd ? 'gratitude-108' : 'loving-kindness'
+  else if (h < 21) id = isOdd ? 'wish-108' : 'gwanseum'
+  else id = isOdd ? 'om-mani' : 'deep-meditation'
+
+  return RECOMMENDATIONS[id]
+}
+
 function getGreeting(): string {
   const h = new Date().getHours()
   if (h < 6) return 'Good night'
@@ -91,10 +132,10 @@ export default function HomePage() {
     }
   }, [user, loading])
 
-  // 다음에 할 수행 (미완료 중 첫 번째)
-  const nextPractice = PRACTICES.find((p) => !status[p.key])
-  const allDone = !nextPractice
+  // 시간대 × 요일 큐레이션 (매번 들어올 때마다 다른 추천)
+  const recommendation = getTodayRecommendation()
   const completedCount = [status.bae108, status.meditation, status.yeobul].filter(Boolean).length
+  const allDone = completedCount === 3
 
   return (
     <div className="flex flex-col">
@@ -274,10 +315,10 @@ export default function HomePage() {
                       {timeMessage}
                     </p>
                     <p className="label-tag mb-2 text-foreground-dim">
-                      {nextPractice!.english} · {nextPractice!.duration}
+                      {recommendation.english} · {recommendation.duration}
                     </p>
                     <h2 className="text-[40px] leading-[0.95] tracking-tight text-foreground font-medium">
-                      {nextPractice!.label}
+                      {recommendation.label}
                     </h2>
                     <p className="text-foreground-dim text-[11px] mt-3 leading-relaxed line-clamp-2 max-w-[85%] italic">
                       &ldquo;{todayWisdom.text.slice(0, 42)}
@@ -289,8 +330,8 @@ export default function HomePage() {
 
               {!allDone && (
                 <Link
-                  href={nextPractice!.href}
-                  aria-label={`${nextPractice!.label} 시작`}
+                  href={recommendation.href}
+                  aria-label={`${recommendation.label} 시작`}
                   className="group shrink-0 w-14 h-14 rounded-full border border-foreground/30 flex items-center justify-center hover:border-foreground hover:bg-foreground/5 transition-all active:scale-95"
                 >
                   <Play size={17} strokeWidth={1.2} className="text-foreground translate-x-[1.5px]" fill="currentColor" />
@@ -304,7 +345,7 @@ export default function HomePage() {
         <nav className="mt-4 flex items-center gap-5 overflow-x-auto scrollbar-hide">
           {PRACTICES.map(p => {
             const done = status[p.key]
-            const isNext = nextPractice?.key === p.key
+            const isNext = !done && recommendation.key === p.key
             return (
               <Link
                 key={p.href}
