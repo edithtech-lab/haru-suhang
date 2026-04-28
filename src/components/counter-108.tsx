@@ -25,8 +25,18 @@ export function Counter108({ count, onCount, completed }: Counter108Props) {
 
   return (
     <div
-      className="relative w-full min-h-[60vh] flex flex-col items-center justify-center cursor-pointer select-none"
+      role="button"
+      tabIndex={completed ? -1 : 0}
+      aria-label="화면을 탭하여 절을 카운트하세요"
+      aria-disabled={completed}
+      className="relative w-full min-h-[60vh] flex flex-col items-center justify-center cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl"
       onClick={handleInteraction}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleInteraction()
+        }
+      }}
       onTouchStart={(e) => { e.preventDefault(); handleInteraction() }}
     >
       {/* 큰 만다라 배경 (회전·호흡) */}

@@ -5,7 +5,7 @@ import { BottomNav } from '@/components/bottom-nav'
 import { SplashScreen } from '@/components/splash-screen'
 import { AuthProvider } from '@/lib/auth-context'
 
-// Noto Serif KR은 경전/법어 본문 한자 혼용 등 제한적으로만 사용
+// Noto Serif KR은 한자 혼용 등 제한적으로만 사용
 const notoSerifKR = Noto_Serif_KR({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
@@ -40,6 +40,8 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`h-full antialiased ${notoSerifKR.variable}`}>
       <head>
+        {/* Pretendard CDN — preconnect로 LCP 최적화 */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           as="style"

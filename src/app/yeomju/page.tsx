@@ -218,8 +218,18 @@ export default function YeomjuPage() {
 
             {/* 진언 + 만다라 + 카운트 (탭 영역) */}
             <div
-              className="relative flex-1 min-h-[55vh] flex flex-col items-center justify-center cursor-pointer select-none"
+              role="button"
+              tabIndex={completed ? -1 : 0}
+              aria-label="화면을 탭하여 진언 카운트"
+              aria-disabled={completed}
+              className="relative flex-1 min-h-[55vh] flex flex-col items-center justify-center cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl"
               onClick={handleCount}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleCount()
+                }
+              }}
               onTouchStart={(e) => { e.preventDefault(); handleCount() }}
             >
               {/* 큰 만다라 배경 */}
@@ -314,8 +324,18 @@ export default function YeomjuPage() {
 
             {/* 카운트 영역 */}
             <div
-              className="relative flex-1 min-h-[40vh] flex flex-col items-center justify-center cursor-pointer select-none"
+              role="button"
+              tabIndex={completed ? -1 : 0}
+              aria-label="화면을 탭하여 독경 카운트"
+              aria-disabled={completed}
+              className="relative flex-1 min-h-[40vh] flex flex-col items-center justify-center cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl"
               onClick={handleCount}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleCount()
+                }
+              }}
               onTouchStart={(e) => { e.preventDefault(); handleCount() }}
             >
               <div
