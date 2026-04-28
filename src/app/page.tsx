@@ -46,7 +46,6 @@ export default function HomePage() {
   const nextPractice = PRACTICES.find((p) => !status[p.key])
   const allDone = !nextPractice
   const completedCount = [status.bae108, status.meditation, status.yeobul].filter(Boolean).length
-  const [heroImageReady, setHeroImageReady] = useState(false)
 
   return (
     <div className="flex flex-col">
@@ -130,16 +129,14 @@ export default function HomePage() {
             />
           </div>
 
-          {/* 2. 실사 이미지 — 있으면 그라데이션 위로 페이드인 */}
+          {/* 2. 실사 이미지 — 즉시 표시 (페이드 없음) */}
           <Image
             src={allDone ? '/images/hero/anjali-complete.webp' : '/images/hero/anjali.webp'}
             alt=""
             fill
             priority
             sizes="(max-width: 512px) 100vw, 512px"
-            className={`object-cover transition-opacity duration-700 ${heroImageReady ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setHeroImageReady(true)}
-            onError={() => setHeroImageReady(false)}
+            className="object-cover"
           />
 
           {/* 3. 컬러 톤 오버레이 — 사진 위에 앱 액센트 톤 살짝 덮음 */}

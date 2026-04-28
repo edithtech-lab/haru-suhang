@@ -270,7 +270,7 @@ export default function SoundsPage() {
                       'text-[15px] tracking-tight',
                       isActive ? 'text-foreground' : 'text-foreground-dim',
                     )}>
-                      {sound.emoji} {sound.name}
+                      {sound.name}
                     </p>
                     {isActive && (
                       <input

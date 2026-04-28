@@ -18,18 +18,39 @@ const SUGGESTED_QUESTIONS = [
   '집착을 내려놓는 법',
 ]
 
-const GUEST_LIMIT = 3
-const GUEST_COUNT_KEY = 'haru-chat-guest-count'
+const GUEST_DAILY_LIMIT = 1
+const GUEST_DAILY_KEY = 'haru-chat-daily-use'
 
-function getGuestCount(): number {
-  if (typeof window === 'undefined') return 0
-  return parseInt(localStorage.getItem(GUEST_COUNT_KEY) || '0', 10)
+function todayStr() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-function incrementGuestCount(): number {
-  const count = getGuestCount() + 1
-  localStorage.setItem(GUEST_COUNT_KEY, String(count))
-  return count
+interface DailyUse { date: string; count: number }
+
+function getTodayUse(): DailyUse {
+  if (typeof window === 'undefined') return { date: '', count: 0 }
+  try {
+    const raw = localStorage.getItem(GUEST_DAILY_KEY)
+    const today = todayStr()
+    if (!raw) return { date: today, count: 0 }
+    const state = JSON.parse(raw) as DailyUse
+    if (state.date !== today) return { date: today, count: 0 }
+    return state
+  } catch {
+    return { date: todayStr(), count: 0 }
+  }
+}
+
+function incrementTodayUse(): number {
+  const state = getTodayUse()
+  const next: DailyUse = { date: state.date || todayStr(), count: state.count + 1 }
+  try {
+    localStorage.setItem(GUEST_DAILY_KEY, JSON.stringify(next))
+  } catch {
+    // 무시
+  }
+  return next.count
 }
 
 export default function WisdomPage() {
@@ -53,7 +74,7 @@ export default function WisdomPage() {
         setHistoryLoaded(true)
       })
     } else {
-      setGuestCount(getGuestCount())
+      setGuestCount(getTodayUse().count)
       setHistoryLoaded(true)
     }
   }, [user, authLoading])
@@ -71,9 +92,9 @@ export default function WisdomPage() {
     if (!trimmed || streaming) return
 
     if (!user) {
-      const count = getGuestCount()
-      if (count >= GUEST_LIMIT) return
-      const newCount = incrementGuestCount()
+      const count = getTodayUse().count
+      if (count >= GUEST_DAILY_LIMIT) return
+      const newCount = incrementTodayUse()
       setGuestCount(newCount)
     }
 
@@ -183,7 +204,7 @@ export default function WisdomPage() {
     if (ok) setMessages([])
   }
 
-  const guestLimitReached = !user && guestCount >= GUEST_LIMIT
+  const guestLimitReached = !user && guestCount >= GUEST_DAILY_LIMIT
 
   return (
     <div className="flex flex-col h-[calc(100dvh-5rem)]">
@@ -289,7 +310,8 @@ export default function WisdomPage() {
         <div className="px-5 py-3 shrink-0">
           <div className="surface-paper rounded-2xl p-4 flex items-center justify-between gap-3">
             <p className="text-foreground-dim text-[13px]">
-              계속 대화하려면 로그인이 필요합니다
+              오늘 무료 1회를 사용했습니다.<br />
+              로그인하면 무제한으로 여쭐 수 있어요.
             </p>
             <Link
               href="/auth"
@@ -341,7 +363,7 @@ export default function WisdomPage() {
         </form>
         {!user && !guestLimitReached && (
           <p className="label-tag text-center mt-2">
-            비로그인 {GUEST_LIMIT - guestCount}회 남음
+            오늘 무료 {Math.max(0, GUEST_DAILY_LIMIT - guestCount)}회 남음 · 로그인 시 무제한
           </p>
         )}
       </div>
