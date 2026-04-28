@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 분당 20회 (구절 해설은 자주 호출 가능)
+  const rl = rateLimit(req, { prefix: 'wisdom', limit: 20, windowMs: 60_000 })
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { commentary: '잠시 후 다시 시도해주세요.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
+      },
+    )
+  }
+
   const { text, source } = await req.json()
 
   // 입력 검증 (DoS / 비용 폭주 방지)
