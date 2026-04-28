@@ -5,14 +5,9 @@ import Link from 'next/link'
 import { ArrowLeft, Send, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
-
-type JournalEntry = {
-  id: string
-  entry: string
-  reply: string
-  emotion: string | null
-  createdAt: string
-}
+import { useAuth } from '@/lib/auth-context'
+import { loadJournal, saveJournal, deleteJournal, migrateLocalToCloud } from '@/lib/journal-store'
+import type { JournalEntry } from '@/types'
 
 const EMOTIONS = [
   { id: 'calm', label: '평온', color: 'peaceful' },
@@ -25,28 +20,8 @@ const EMOTIONS = [
   { id: 'confused', label: '혼란', color: 'warm' },
 ] as const
 
-const STORAGE_KEY = 'haru-journal-entries'
-
-function loadEntries(): JournalEntry[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
-function saveEntries(entries: JournalEntry[]) {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, 50)))
-  } catch {
-    // 저장 실패 무시
-  }
-}
-
 export default function JournalPage() {
+  const { user } = useAuth()
   const [entry, setEntry] = useState('')
   const [emotion, setEmotion] = useState<string | null>(null)
   const [streaming, setStreaming] = useState(false)
@@ -55,9 +30,23 @@ export default function JournalPage() {
   const [view, setView] = useState<'write' | 'history'>('write')
   const replyRef = useRef<HTMLDivElement>(null)
 
+  // 로그인 상태 변경 시 데이터 로드 + 비로그인→로그인 시 1회 마이그레이션
   useEffect(() => {
-    setHistory(loadEntries())
-  }, [])
+    let cancelled = false
+    async function load() {
+      if (user) {
+        // 1회 마이그레이션 시도 (로컬 저널 → 클라우드)
+        const migrated = await migrateLocalToCloud(user.id)
+        if (migrated > 0) {
+          console.log(`마이그레이션 ${migrated}개 완료`)
+        }
+      }
+      const entries = await loadJournal(user?.id ?? null)
+      if (!cancelled) setHistory(entries)
+    }
+    load()
+    return () => { cancelled = true }
+  }, [user])
 
   useEffect(() => {
     if (reply && replyRef.current) {
@@ -113,17 +102,9 @@ export default function JournalPage() {
         }
       }
 
-      // 기록 저장 (로컬)
-      const newEntry: JournalEntry = {
-        id: crypto.randomUUID(),
-        entry: text,
-        reply: full,
-        emotion: emotionLabel,
-        createdAt: new Date().toISOString(),
-      }
-      const updated = [newEntry, ...history]
-      setHistory(updated)
-      saveEntries(updated)
+      // 기록 저장 (로그인 시 Supabase, 비로그인 시 localStorage)
+      const saved = await saveJournal(user?.id ?? null, text, full, emotionLabel)
+      setHistory(prev => [saved, ...prev])
     } catch {
       setReply('죄송합니다. 잠시 후 다시 시도해 주세요.')
     } finally {
@@ -137,11 +118,10 @@ export default function JournalPage() {
     setReply('')
   }
 
-  function deleteEntry(id: string) {
+  async function deleteEntry(id: string) {
     if (!confirm('이 기록을 삭제하시겠습니까?')) return
-    const updated = history.filter(h => h.id !== id)
-    setHistory(updated)
-    saveEntries(updated)
+    const ok = await deleteJournal(user?.id ?? null, id)
+    if (ok) setHistory(prev => prev.filter(h => h.id !== id))
   }
 
   const formatDate = (iso: string) => {
@@ -305,7 +285,7 @@ export default function JournalPage() {
                         {h.emotion && (
                           <span className="label-tag text-accent">{h.emotion}</span>
                         )}
-                        <span className="label-tag">{formatDate(h.createdAt)}</span>
+                        <span className="label-tag">{formatDate(h.created_at)}</span>
                       </div>
                       <button
                         onClick={() => deleteEntry(h.id)}

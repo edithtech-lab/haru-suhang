@@ -119,3 +119,14 @@ export interface ChatMessage {
   content: string
   created_at: string
 }
+
+// ===== AI 저널 (마음기록) =====
+
+export interface JournalEntry {
+  id: string
+  user_id?: string
+  entry: string
+  reply: string
+  emotion: string | null
+  created_at: string
+}
