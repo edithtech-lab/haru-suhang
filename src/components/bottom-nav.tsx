@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Flame, Sparkles, BookOpen, User } from 'lucide-react'
+import { Home, Flame, Sparkle, BookOpen, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/bae108', label: 'Practice', icon: Flame, matchPaths: ['/bae108', '/meditation', '/yeomju'] },
+  { href: '/practice', label: 'Practice', icon: Flame, matchPaths: ['/practice', '/bae108', '/meditation', '/yeomju'] },
   { href: '/sutra', label: 'Sutras', icon: BookOpen },
-  { href: '/wisdom', label: 'Wisdom', icon: Sparkles },
+  { href: '/wisdom', label: 'Wisdom', icon: Sparkle },
   { href: '/me', label: 'Me', icon: User, matchPaths: ['/me', '/doban', '/calendar', '/journal', '/settings'] },
 ]
 

@@ -88,7 +88,7 @@ export class BowGuidedPlayer {
     return { status: this.status, count: this.currentBow }
   }
 
-  // 시작 — intro 재생 후 첫 카운트로 진입
+  // 시작 — intro 음성이 끝난 뒤 1.5초 대기 후 첫 카운트
   async start() {
     if (this.status !== 'idle' && this.status !== 'paused') return
     await this.acquireWakeLock()
@@ -97,14 +97,24 @@ export class BowGuidedPlayer {
 
     const intro = this.audioPool.get('intro')
     if (intro) {
-      this.playClone(intro)
-      // intro 길이 + 짧은 정적
+      // 안전 fallback — intro 음성이 어떤 이유로든 ended 이벤트를 못 쏘면 8초 후 강제 시작
       this.timer = setTimeout(() => {
         if ((this.status as BowStatus) === 'intro') {
           this.setStatus('playing')
           this.tick()
         }
-      }, 5500)
+      }, 8000)
+
+      this.playClone(intro, () => {
+        // intro 끝남 → 1.5초 정적 후 첫 카운트
+        if (this.timer) clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          if ((this.status as BowStatus) === 'intro') {
+            this.setStatus('playing')
+            this.tick()
+          }
+        }, 1500)
+      })
     } else {
       this.setStatus('playing')
       this.tick()
@@ -224,22 +234,29 @@ export class BowGuidedPlayer {
   }
 
   // 같은 audio element 동시 재생 회피 — 클론해서 재생
-  private playClone(template: HTMLAudioElement) {
+  // onEnded는 음성이 끝나거나 재생 실패 시 한 번만 호출 (호출자가 다음 단계 트리거 가능)
+  private playClone(template: HTMLAudioElement, onEnded?: () => void) {
     try {
       const clone = template.cloneNode(true) as HTMLAudioElement
       clone.volume = 1
       this.currentlyPlaying.add(clone)
       clone.addEventListener('ended', () => {
         this.currentlyPlaying.delete(clone)
-      })
+        onEnded?.()
+      }, { once: true })
+      clone.addEventListener('error', () => {
+        this.currentlyPlaying.delete(clone)
+        onEnded?.()
+      }, { once: true })
       const p = clone.play()
       if (p && typeof p.catch === 'function') {
         p.catch(() => {
-          // 자동재생 정책 등 — 무시
+          this.currentlyPlaying.delete(clone)
+          onEnded?.()
         })
       }
     } catch {
-      // 무시
+      onEnded?.()
     }
   }
 
