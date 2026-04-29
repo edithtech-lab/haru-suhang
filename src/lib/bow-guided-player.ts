@@ -89,8 +89,8 @@ export class BowGuidedPlayer {
   }
 
   // 시작 — intro 음성을 끝까지 재생하고 2초 정적 후 첫 카운트
-  // 클론을 쓰지 않고 원본 audio를 재생 (metadata 보장 → ended 이벤트 정확)
-  // ended·duration·timeout 3중 안전장치로 어떤 환경에서도 겹치지 않게
+  // ended 이벤트만 신뢰 (duration 신뢰 X — 일부 환경에서 잘못된 값)
+  // 절대 fallback 12초로 안전망 (음성 미재생 시에도 진행)
   async start() {
     if (this.status !== 'idle' && this.status !== 'paused') return
     await this.acquireWakeLock()
@@ -111,41 +111,30 @@ export class BowGuidedPlayer {
       if (this.timer) clearTimeout(this.timer)
       // intro 끝난 뒤 2초 정적 → 첫 카운트
       this.timer = setTimeout(() => {
-        if ((this.status as BowStatus) === 'intro') {
+        if (this.status === 'intro') {
           this.setStatus('playing')
           this.tick()
         }
       }, 2000)
     }
 
-    // 원본 audio 재생 (클론 X — metadata 보장)
+    // 원본 audio (클론 X — metadata 보장, ended 이벤트 정확)
     intro.currentTime = 0
     intro.volume = 1
-    intro.addEventListener('ended', advance, { once: true })
-    intro.addEventListener('error', advance, { once: true })
+    intro.onended = () => advance()
+    intro.onerror = () => advance()
 
-    // 안전장치: duration 기반 + 절대 fallback
-    const armDurationFallback = () => {
-      const dur = intro.duration
-      // duration이 유효하면 길이 + 0.3초 후 강제 advance (ended 누락 대비)
-      if (isFinite(dur) && dur > 0) {
-        this.timer = setTimeout(advance, (dur + 0.3) * 1000)
-      } else {
-        // duration 모를 때 절대 fallback 10초
-        this.timer = setTimeout(advance, 10000)
+    // 절대 fallback — 음성이 어떤 이유로든 12초 안에 끝나지 않으면 강제 진행
+    // (intro 음성은 약 5~6초이므로 12초면 충분히 안전)
+    this.timer = setTimeout(advance, 12000)
+
+    try {
+      const p = intro.play()
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => advance())
       }
-    }
-    if (intro.readyState >= 1) {
-      armDurationFallback()
-    } else {
-      intro.addEventListener('loadedmetadata', armDurationFallback, { once: true })
-      // metadata 로드 자체가 늦을 경우 절대 fallback
-      this.timer = setTimeout(advance, 10000)
-    }
-
-    const p = intro.play()
-    if (p && typeof p.catch === 'function') {
-      p.catch(() => advance())
+    } catch {
+      advance()
     }
   }
 
