@@ -88,7 +88,9 @@ export class BowGuidedPlayer {
     return { status: this.status, count: this.currentBow }
   }
 
-  // 시작 — intro 음성이 끝난 뒤 1.5초 대기 후 첫 카운트
+  // 시작 — intro 음성을 끝까지 재생하고 2초 정적 후 첫 카운트
+  // 클론을 쓰지 않고 원본 audio를 재생 (metadata 보장 → ended 이벤트 정확)
+  // ended·duration·timeout 3중 안전장치로 어떤 환경에서도 겹치지 않게
   async start() {
     if (this.status !== 'idle' && this.status !== 'paused') return
     await this.acquireWakeLock()
@@ -96,28 +98,54 @@ export class BowGuidedPlayer {
     this.setStatus('intro')
 
     const intro = this.audioPool.get('intro')
-    if (intro) {
-      // 안전 fallback — intro 음성이 어떤 이유로든 ended 이벤트를 못 쏘면 8초 후 강제 시작
+    if (!intro) {
+      this.setStatus('playing')
+      this.tick()
+      return
+    }
+
+    let advanced = false
+    const advance = () => {
+      if (advanced) return
+      advanced = true
+      if (this.timer) clearTimeout(this.timer)
+      // intro 끝난 뒤 2초 정적 → 첫 카운트
       this.timer = setTimeout(() => {
         if ((this.status as BowStatus) === 'intro') {
           this.setStatus('playing')
           this.tick()
         }
-      }, 8000)
+      }, 2000)
+    }
 
-      this.playClone(intro, () => {
-        // intro 끝남 → 1.5초 정적 후 첫 카운트
-        if (this.timer) clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          if ((this.status as BowStatus) === 'intro') {
-            this.setStatus('playing')
-            this.tick()
-          }
-        }, 1500)
-      })
+    // 원본 audio 재생 (클론 X — metadata 보장)
+    intro.currentTime = 0
+    intro.volume = 1
+    intro.addEventListener('ended', advance, { once: true })
+    intro.addEventListener('error', advance, { once: true })
+
+    // 안전장치: duration 기반 + 절대 fallback
+    const armDurationFallback = () => {
+      const dur = intro.duration
+      // duration이 유효하면 길이 + 0.3초 후 강제 advance (ended 누락 대비)
+      if (isFinite(dur) && dur > 0) {
+        this.timer = setTimeout(advance, (dur + 0.3) * 1000)
+      } else {
+        // duration 모를 때 절대 fallback 10초
+        this.timer = setTimeout(advance, 10000)
+      }
+    }
+    if (intro.readyState >= 1) {
+      armDurationFallback()
     } else {
-      this.setStatus('playing')
-      this.tick()
+      intro.addEventListener('loadedmetadata', armDurationFallback, { once: true })
+      // metadata 로드 자체가 늦을 경우 절대 fallback
+      this.timer = setTimeout(advance, 10000)
+    }
+
+    const p = intro.play()
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => advance())
     }
   }
 
