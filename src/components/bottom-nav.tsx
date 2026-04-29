@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils'
 const NAV_ITEMS = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/practice', label: 'Practice', icon: Flame, matchPaths: ['/practice', '/bae108', '/meditation', '/yeomju'] },
-  { href: '/sutra', label: 'Sutras', icon: BookOpen },
   { href: '/wisdom', label: 'Wisdom', icon: Sparkle },
+  { href: '/sutra', label: 'Sutras', icon: BookOpen },
   { href: '/me', label: 'Me', icon: User, matchPaths: ['/me', '/doban', '/calendar', '/journal', '/settings'] },
 ]
 

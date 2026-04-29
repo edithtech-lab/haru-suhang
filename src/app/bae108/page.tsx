@@ -262,33 +262,32 @@ export default function Bae108Page() {
         )}
       </section>
 
-      {/* 모드 선택 — 시작 전에만 노출 */}
+      {/* 모드 선택 — 시작 전에만 노출 (미니멀 텍스트 토글) */}
       {!completed && (
-        <section className="px-5 pb-3 animate-in">
-          <div className="grid grid-cols-2 gap-2 surface-paper rounded-2xl p-1.5">
-            <button
-              onClick={() => changeMode('guided')}
-              className={cn(
-                'py-2.5 rounded-xl text-[13px] tracking-tight transition-colors',
-                mode === 'guided'
-                  ? 'bg-[var(--accent-glow)] text-accent'
-                  : 'text-foreground-dim hover:text-foreground',
-              )}
-            >
-              음성 가이드
-            </button>
-            <button
-              onClick={() => changeMode('manual')}
-              className={cn(
-                'py-2.5 rounded-xl text-[13px] tracking-tight transition-colors',
-                mode === 'manual'
-                  ? 'bg-[var(--accent-glow)] text-accent'
-                  : 'text-foreground-dim hover:text-foreground',
-              )}
-            >
-              수동 탭
-            </button>
-          </div>
+        <section className="px-5 pb-4 animate-in flex items-center justify-center gap-4 text-[13px] tracking-tight">
+          <button
+            onClick={() => changeMode('guided')}
+            className={cn(
+              'py-1 border-b transition-colors',
+              mode === 'guided'
+                ? 'text-accent border-accent'
+                : 'text-foreground-dim border-transparent hover:text-foreground',
+            )}
+          >
+            음성 가이드
+          </button>
+          <span className="text-muted-deep/40">·</span>
+          <button
+            onClick={() => changeMode('manual')}
+            className={cn(
+              'py-1 border-b transition-colors',
+              mode === 'manual'
+                ? 'text-accent border-accent'
+                : 'text-foreground-dim border-transparent hover:text-foreground',
+            )}
+          >
+            수동 탭
+          </button>
         </section>
       )}
 
