@@ -1,0 +1,53 @@
+{
+  "voices": [
+    {
+      "id": "hyeonmuk",
+      "label": "현묵",
+      "model": "tts-1-hd",
+      "openaiVoice": "onyx",
+      "files": {
+        "counts": 108,
+        "intro": "intro.mp3",
+        "half": "half.mp3",
+        "end": "end.mp3"
+      }
+    },
+    {
+      "id": "jeongan",
+      "label": "정안",
+      "model": "gpt-4o-mini-tts",
+      "openaiVoice": "ash",
+      "files": {
+        "counts": 108,
+        "intro": "intro.mp3",
+        "half": "half.mp3",
+        "end": "end.mp3"
+      }
+    },
+    {
+      "id": "hyeoo",
+      "label": "혜오",
+      "model": "gpt-4o-mini-tts",
+      "openaiVoice": "sage",
+      "files": {
+        "counts": 108,
+        "intro": "intro.mp3",
+        "half": "half.mp3",
+        "end": "end.mp3"
+      }
+    },
+    {
+      "id": "jaeun",
+      "label": "자은",
+      "model": "tts-1-hd",
+      "openaiVoice": "shimmer",
+      "files": {
+        "counts": 108,
+        "intro": "intro.mp3",
+        "half": "half.mp3",
+        "end": "end.mp3"
+      }
+    }
+  ],
+  "generatedAt": "2026-04-29T07:24:08.336Z"
+}
