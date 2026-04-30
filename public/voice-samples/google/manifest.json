@@ -1,0 +1,89 @@
+{
+  "samples": [
+    {
+      "id": "intro",
+      "text": "지금부터 백팔배를 시작합니다. 마음을 모아 절을 올리세요."
+    },
+    {
+      "id": "count",
+      "text": "일배. 이배. 삼배. 십배. 오십사배. 백팔배."
+    },
+    {
+      "id": "end",
+      "text": "백팔배 회향합니다. 수고하셨습니다."
+    }
+  ],
+  "voices": [
+    {
+      "name": "ko-KR-Neural2-A",
+      "gender": "여성",
+      "tone": "Neural2 · 밝고 부드러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Neural2-B",
+      "gender": "남성",
+      "tone": "Neural2 · 깊고 차분",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Neural2-C",
+      "gender": "여성",
+      "tone": "Neural2 · 따뜻하고 명료",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Wavenet-A",
+      "gender": "여성",
+      "tone": "Wavenet · 자연스러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Wavenet-B",
+      "gender": "여성",
+      "tone": "Wavenet · 부드러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Wavenet-C",
+      "gender": "남성",
+      "tone": "Wavenet · 안정적",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Wavenet-D",
+      "gender": "남성",
+      "tone": "Wavenet · 따뜻함",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    }
+  ],
+  "generatedAt": "2026-04-30T02:21:24.439Z"
+}
