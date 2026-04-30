@@ -15,9 +15,9 @@
   ],
   "voices": [
     {
-      "name": "ko-KR-Neural2-A",
-      "gender": "여성",
-      "tone": "Neural2 · 밝고 부드러움",
+      "name": "ko-KR-Chirp3-HD-Charon",
+      "gender": "남성",
+      "tone": "Chirp3 · 깊고 묵직",
       "samples": [
         "intro",
         "count",
@@ -25,9 +25,59 @@
       ]
     },
     {
-      "name": "ko-KR-Neural2-B",
+      "name": "ko-KR-Chirp3-HD-Schedar",
       "gender": "남성",
-      "tone": "Neural2 · 깊고 차분",
+      "tone": "Chirp3 · 안정감",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Iapetus",
+      "gender": "남성",
+      "tone": "Chirp3 · 차분함",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Orus",
+      "gender": "남성",
+      "tone": "Chirp3 · 단단함",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Algenib",
+      "gender": "남성",
+      "tone": "Chirp3 · 따뜻함",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Achird",
+      "gender": "남성",
+      "tone": "Chirp3 · 부드러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Puck",
+      "gender": "남성",
+      "tone": "Chirp3 · 명료함",
       "samples": [
         "intro",
         "count",
@@ -36,28 +86,8 @@
     },
     {
       "name": "ko-KR-Neural2-C",
-      "gender": "여성",
-      "tone": "Neural2 · 따뜻하고 명료",
-      "samples": [
-        "intro",
-        "count",
-        "end"
-      ]
-    },
-    {
-      "name": "ko-KR-Wavenet-A",
-      "gender": "여성",
-      "tone": "Wavenet · 자연스러움",
-      "samples": [
-        "intro",
-        "count",
-        "end"
-      ]
-    },
-    {
-      "name": "ko-KR-Wavenet-B",
-      "gender": "여성",
-      "tone": "Wavenet · 부드러움",
+      "gender": "남성",
+      "tone": "Neural2 · 깊고 차분",
       "samples": [
         "intro",
         "count",
@@ -83,7 +113,57 @@
         "count",
         "end"
       ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Aoede",
+      "gender": "여성",
+      "tone": "Chirp3 · 맑고 따뜻",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Kore",
+      "gender": "여성",
+      "tone": "Chirp3 · 차분",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Chirp3-HD-Sulafat",
+      "gender": "여성",
+      "tone": "Chirp3 · 부드러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Neural2-B",
+      "gender": "여성",
+      "tone": "Neural2 · 자연스러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
+    },
+    {
+      "name": "ko-KR-Wavenet-B",
+      "gender": "여성",
+      "tone": "Wavenet · 부드러움",
+      "samples": [
+        "intro",
+        "count",
+        "end"
+      ]
     }
   ],
-  "generatedAt": "2026-04-30T02:21:24.439Z"
+  "generatedAt": "2026-04-30T02:34:59.578Z"
 }

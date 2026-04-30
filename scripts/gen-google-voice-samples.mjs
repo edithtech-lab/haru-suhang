@@ -1,6 +1,7 @@
 // Google Cloud TTS 한국어 음색 비교 샘플 생성
-// Neural2 3개 + Wavenet 4개 = 7개 음색 × 3샘플(intro/count/end) = 21 mp3
+// 15개 음색 큐레이션: Chirp3-HD 10 + Neural2 3 + Wavenet 5
 // 결과: public/voice-samples/google/{voice-name}__{sample-id}.mp3
+// 이미 있는 파일은 스킵 (비용·시간 절약)
 
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -14,7 +15,6 @@ if (!apiKeyMatch) {
 }
 const apiKey = apiKeyMatch[1].trim()
 
-// 비교 샘플 텍스트 — 시작·카운트·회향 모두 들어가게
 const SAMPLES = [
   {
     id: 'intro',
@@ -30,21 +30,45 @@ const SAMPLES = [
   },
 ]
 
-// 한국어 음색 후보 (Neural2 + Wavenet)
+// 큐레이션 — 명상 톤 후보 15명
 const VOICES = [
-  { name: 'ko-KR-Neural2-A', gender: '여성', tone: 'Neural2 · 밝고 부드러움' },
-  { name: 'ko-KR-Neural2-B', gender: '남성', tone: 'Neural2 · 깊고 차분' },
-  { name: 'ko-KR-Neural2-C', gender: '여성', tone: 'Neural2 · 따뜻하고 명료' },
-  { name: 'ko-KR-Wavenet-A', gender: '여성', tone: 'Wavenet · 자연스러움' },
-  { name: 'ko-KR-Wavenet-B', gender: '여성', tone: 'Wavenet · 부드러움' },
+  // 남성 — Chirp3-HD (Google 2024 신모델, 가장 자연스러움)
+  { name: 'ko-KR-Chirp3-HD-Charon', gender: '남성', tone: 'Chirp3 · 깊고 묵직' },
+  { name: 'ko-KR-Chirp3-HD-Schedar', gender: '남성', tone: 'Chirp3 · 안정감' },
+  { name: 'ko-KR-Chirp3-HD-Iapetus', gender: '남성', tone: 'Chirp3 · 차분함' },
+  { name: 'ko-KR-Chirp3-HD-Orus', gender: '남성', tone: 'Chirp3 · 단단함' },
+  { name: 'ko-KR-Chirp3-HD-Algenib', gender: '남성', tone: 'Chirp3 · 따뜻함' },
+  { name: 'ko-KR-Chirp3-HD-Achird', gender: '남성', tone: 'Chirp3 · 부드러움' },
+  { name: 'ko-KR-Chirp3-HD-Puck', gender: '남성', tone: 'Chirp3 · 명료함' },
+  // 남성 — Neural2 / Wavenet (기존)
+  { name: 'ko-KR-Neural2-C', gender: '남성', tone: 'Neural2 · 깊고 차분' },
   { name: 'ko-KR-Wavenet-C', gender: '남성', tone: 'Wavenet · 안정적' },
   { name: 'ko-KR-Wavenet-D', gender: '남성', tone: 'Wavenet · 따뜻함' },
+  // 여성 — Chirp3-HD
+  { name: 'ko-KR-Chirp3-HD-Aoede', gender: '여성', tone: 'Chirp3 · 맑고 따뜻' },
+  { name: 'ko-KR-Chirp3-HD-Kore', gender: '여성', tone: 'Chirp3 · 차분' },
+  { name: 'ko-KR-Chirp3-HD-Sulafat', gender: '여성', tone: 'Chirp3 · 부드러움' },
+  // 여성 — Neural2 / Wavenet (기존)
+  { name: 'ko-KR-Neural2-B', gender: '여성', tone: 'Neural2 · 자연스러움' },
+  { name: 'ko-KR-Wavenet-B', gender: '여성', tone: 'Wavenet · 부드러움' },
 ]
 
 const OUT_DIR = path.resolve('public/voice-samples/google')
 await fs.mkdir(OUT_DIR, { recursive: true })
 
+async function fileExists(p) {
+  try {
+    await fs.access(p)
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function gen(voice, text, outPath) {
+  if (await fileExists(outPath)) {
+    return { ok: true, skipped: true }
+  }
   try {
     const res = await fetch(
       `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
@@ -64,37 +88,49 @@ async function gen(voice, text, outPath) {
     )
     if (!res.ok) {
       const errText = await res.text()
-      console.warn(`  FAIL ${path.basename(outPath)}: HTTP ${res.status}`)
-      console.warn(`       ${errText.slice(0, 200)}`)
-      return false
+      console.warn(`  FAIL HTTP ${res.status}: ${errText.slice(0, 200)}`)
+      return { ok: false }
     }
     const data = await res.json()
     if (!data.audioContent) {
-      console.warn(`  ERR ${path.basename(outPath)}: no audioContent`)
-      return false
+      console.warn('  ERR no audioContent')
+      return { ok: false }
     }
     const buf = Buffer.from(data.audioContent, 'base64')
     await fs.writeFile(outPath, buf)
-    return true
+    return { ok: true, skipped: false }
   } catch (e) {
-    console.warn(`  ERR ${path.basename(outPath)}: ${e.message}`)
-    return false
+    console.warn(`  ERR ${e.message}`)
+    return { ok: false }
   }
 }
 
-const manifest = { samples: SAMPLES, voices: [], generatedAt: new Date().toISOString() }
+const manifest = {
+  samples: SAMPLES,
+  voices: [],
+  generatedAt: new Date().toISOString(),
+}
+let newCount = 0
+let skipCount = 0
+
 for (const v of VOICES) {
   console.log(`\n[${v.name} :: ${v.gender} ${v.tone}]`)
   const okIds = []
   for (const s of SAMPLES) {
     const filename = `${v.name}__${s.id}.mp3`
     const outPath = path.join(OUT_DIR, filename)
-    const ok = await gen(v.name, s.text, outPath)
-    if (ok) {
+    const r = await gen(v.name, s.text, outPath)
+    if (r.ok) {
       okIds.push(s.id)
-      console.log(`  OK   ${filename}`)
+      if (r.skipped) {
+        skipCount++
+        console.log(`  SKIP ${filename}`)
+      } else {
+        newCount++
+        console.log(`  OK   ${filename}`)
+      }
     }
-    await new Promise(r => setTimeout(r, 200))
+    if (!r.skipped) await new Promise(r => setTimeout(r, 200))
   }
   if (okIds.length === SAMPLES.length) {
     manifest.voices.push({
@@ -110,4 +146,6 @@ await fs.writeFile(
   path.join(OUT_DIR, 'manifest.json'),
   JSON.stringify(manifest, null, 2),
 )
-console.log(`\nDone. ${manifest.voices.length}/${VOICES.length} voice(s) succeeded.`)
+console.log(
+  `\nDone. ${manifest.voices.length}/${VOICES.length} voices · new ${newCount}, skipped ${skipCount}`,
+)
