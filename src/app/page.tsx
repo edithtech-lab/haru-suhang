@@ -10,6 +10,7 @@ import { getOrCreateProfile } from '@/lib/group-store'
 import { DAILY_WISDOMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
+import { FavoriteButton } from '@/components/favorite-button'
 import type { DailyStatus, PracticeStats } from '@/types'
 
 const PRACTICES = [
@@ -120,7 +121,8 @@ export default function HomePage() {
   const [status, setStatus] = useState<DailyStatus>({ bae108: false, meditation: false, yeobul: false })
   const [stats, setStats] = useState<PracticeStats>({ streak: 0, totalDays: 0, totalBae108: 0, totalMeditation: 0, totalYeobul: 0 })
 
-  const todayWisdom = DAILY_WISDOMS[new Date().getDate() % DAILY_WISDOMS.length]
+  const todayWisdomIdx = new Date().getDate() % DAILY_WISDOMS.length
+  const todayWisdom = DAILY_WISDOMS[todayWisdomIdx]
   const greeting = getGreeting()
   const timeMessage = getTimeMessage()
   const [displayName, setDisplayName] = useState<string | null>(null)
@@ -466,15 +468,31 @@ export default function HomePage() {
         </ul>
       </section>
 
-      {/* ===== 오늘의 법어 — 심플 인라인 ===== */}
+      {/* ===== 오늘의 한마디 — 즐겨찾기 가능 카드 ===== */}
       <section className="animate-in stagger-3 px-5 mb-8">
-        <p className="label-tag mb-3">Today's wisdom</p>
-        <blockquote className="text-[15px] leading-[1.6] text-foreground-dim">
-          {todayWisdom.text}
-        </blockquote>
-        <p className="mt-2 text-[11px] text-muted uppercase tracking-[0.2em]">
-          — {todayWisdom.source}
-        </p>
+        <div className="flex items-baseline justify-between mb-3">
+          <p className="label-tag">오늘의 한마디</p>
+          <p className="label-upper text-[9px] text-muted-deep">
+            {new Date().toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short' })}
+          </p>
+        </div>
+        <div className="surface-paper rounded-2xl p-5">
+          <blockquote className="text-[16px] leading-[1.75] text-foreground tracking-tight mb-4 font-serif italic">
+            &ldquo;{todayWisdom.text}&rdquo;
+          </blockquote>
+          <div className="flex items-center justify-between">
+            <p className="label-upper text-[10px] text-foreground-dim">
+              — {todayWisdom.source}
+            </p>
+            <FavoriteButton
+              id={`wisdom-${todayWisdomIdx}`}
+              type="wisdom"
+              content={todayWisdom.text}
+              meta={{ source: todayWisdom.source }}
+              size={16}
+            />
+          </div>
+        </div>
       </section>
 
       {/* ===== 바로가기 — 미니멀 텍스트 링크 ===== */}

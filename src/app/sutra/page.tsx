@@ -7,6 +7,7 @@ import { SUTRAS } from '@/lib/sutras'
 import type { Sutra } from '@/lib/sutras'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
+import { FavoriteButton } from '@/components/favorite-button'
 
 export default function SutraPage() {
   const [selected, setSelected] = useState<Sutra | null>(null)
@@ -150,16 +151,35 @@ export default function SutraPage() {
                 className="py-3 px-2 -mx-2 rounded-lg hover:bg-[var(--surface)] cursor-pointer transition-colors"
                 onClick={() => verse.korean && getCommentary(verse.korean, idx)}
               >
-                <p className="text-[16px] text-foreground/95 leading-[1.7] tracking-tight">
-                  {verse.korean}
-                </p>
-                {showChinese && verse.chinese && (
-                  <p
-                    className="text-[14px] text-accent/70 mt-1.5 leading-relaxed font-serif"
-                  >
-                    {verse.chinese}
-                  </p>
-                )}
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] text-foreground/95 leading-[1.7] tracking-tight">
+                      {verse.korean}
+                    </p>
+                    {showChinese && verse.chinese && (
+                      <p
+                        className="text-[14px] text-accent/70 mt-1.5 leading-relaxed font-serif"
+                      >
+                        {verse.chinese}
+                      </p>
+                    )}
+                  </div>
+                  {verse.korean && (
+                    <FavoriteButton
+                      id={`sutra-${selected.id}-${idx}`}
+                      type="sutra"
+                      content={verse.korean}
+                      meta={{
+                        source: selected.title,
+                        sutraId: selected.id,
+                        verseIdx: idx,
+                        chinese: verse.chinese,
+                      }}
+                      size={13}
+                      className="mt-1 shrink-0"
+                    />
+                  )}
+                </div>
                 {loadingIdx === idx && (
                   <p className="label-tag mt-2 animate-pulse">AI 해설 생성 중...</p>
                 )}

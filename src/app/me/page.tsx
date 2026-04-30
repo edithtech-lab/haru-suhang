@@ -23,6 +23,12 @@ const MENU: MenuItem[] = [
     description: '수행 캘린더와 스트릭',
   },
   {
+    href: '/me/favorites',
+    label: '나의 법어집',
+    english: 'Favorites',
+    description: '즐겨찾기한 한마디 · 경전 · 법문',
+  },
+  {
     href: '/journal',
     label: '마음기록',
     english: 'Journal',

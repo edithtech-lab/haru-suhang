@@ -9,6 +9,7 @@ import { DAILY_WISDOMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { Mandala } from '@/components/mandala'
+import { FavoriteButton } from '@/components/favorite-button'
 import type { ChatMessage } from '@/types'
 
 const SUGGESTED_QUESTIONS = [
@@ -273,13 +274,24 @@ export default function WisdomPage() {
             )}
             <div
               className={cn(
-                'chat-bubble max-w-[82%] px-4 py-3 text-[14px] leading-[1.6] whitespace-pre-line tracking-tight',
+                'chat-bubble max-w-[82%] px-4 py-3 text-[14px] leading-[1.6] whitespace-pre-line tracking-tight relative group',
                 msg.role === 'user'
                   ? 'chat-bubble-user bg-foreground text-background'
                   : 'chat-bubble-assistant surface-paper text-foreground',
               )}
             >
               {msg.content}
+              {msg.role === 'assistant' && msg.content.length > 20 && (
+                <div className="mt-2 pt-2 border-t border-[var(--surface-border)] flex justify-end">
+                  <FavoriteButton
+                    id={`chat-${msg.id}`}
+                    type="chat"
+                    content={msg.content}
+                    meta={{ source: 'AI 법현 스님' }}
+                    size={12}
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}

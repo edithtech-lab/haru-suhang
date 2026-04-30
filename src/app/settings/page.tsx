@@ -8,6 +8,7 @@ import { getOrCreateProfile, updateProfile } from '@/lib/group-store'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { BottomSheet, OptionRow } from '@/components/bottom-sheet'
 import { COUNT_SOUNDS, playCountSound, type CountSoundId } from '@/components/audio-player'
+import { getBellSettings, saveBellSettings } from '@/lib/mindful-bell-store'
 import { cn } from '@/lib/utils'
 
 const SOUND_KEY = 'haru-bae108-sound'
@@ -42,6 +43,10 @@ export default function SettingsPage() {
   const [reminder, setReminder] = useState(false)
   const [fellowshipNotify, setFellowshipNotify] = useState(true)
 
+  // 수행자 종 (마음챙김 알림)
+  const [bellEnabled, setBellEnabled] = useState(false)
+  const [bellTimes, setBellTimes] = useState<string[]>(['09:00', '13:00', '18:00'])
+
   // 이름 (display_name)
   const [displayName, setDisplayName] = useState<string>('')
   const [showNameSheet, setShowNameSheet] = useState(false)
@@ -56,6 +61,9 @@ export default function SettingsPage() {
     setVibration(loadBool(VIBRATION_KEY, true))
     setReminder(loadBool(REMINDER_KEY, false))
     setFellowshipNotify(loadBool(FELLOWSHIP_NOTIFY_KEY, true))
+    const bell = getBellSettings()
+    setBellEnabled(bell.enabled)
+    setBellTimes(bell.times)
   }, [])
 
   // 이름 로드
@@ -146,6 +154,36 @@ export default function SettingsPage() {
       <section className="px-5 pb-6 animate-in stagger-2">
         <p className="label-upper mb-3">Notifications</p>
         <ul>
+          <ToggleRow
+            label="수행자 종"
+            sub="정해진 시간에 잠시 멈춤 알림 (앱이 열려 있을 때)"
+            value={bellEnabled}
+            onChange={v => {
+              setBellEnabled(v)
+              saveBellSettings({ enabled: v, times: bellTimes })
+            }}
+          />
+          {bellEnabled && (
+            <li className="px-2 -mx-2 py-3">
+              <p className="label-tag mb-2">시각 (최대 3개)</p>
+              <div className="grid grid-cols-3 gap-2">
+                {bellTimes.map((t, i) => (
+                  <input
+                    key={i}
+                    type="time"
+                    value={t}
+                    onChange={e => {
+                      const next = [...bellTimes]
+                      next[i] = e.target.value
+                      setBellTimes(next)
+                      saveBellSettings({ enabled: bellEnabled, times: next })
+                    }}
+                    className="bg-[var(--surface)] border border-[var(--surface-border)] rounded-lg px-2.5 py-2 text-foreground text-[13px] tabular-nums focus:outline-none focus:border-accent"
+                  />
+                ))}
+              </div>
+            </li>
+          )}
           <ToggleRow
             label="매일 수행 리마인더"
             sub="매일 정해진 시간에 알림 (추후)"

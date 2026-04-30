@@ -3,6 +3,7 @@ import { Noto_Serif_KR } from 'next/font/google'
 import './globals.css'
 import { BottomNav } from '@/components/bottom-nav'
 import { SplashScreen } from '@/components/splash-screen'
+import { MindfulBellListener } from '@/components/mindful-bell-listener'
 import { AuthProvider } from '@/lib/auth-context'
 
 // Noto Serif KR은 한자 혼용 등 제한적으로만 사용
@@ -57,6 +58,7 @@ export default function RootLayout({
             {children}
           </main>
           <BottomNav />
+          <MindfulBellListener />
         </AuthProvider>
       </body>
     </html>
