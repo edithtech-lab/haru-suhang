@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, Trash2 } from 'lucide-react'
 import { MoodBackdrop } from '@/components/mood-backdrop'
+import { ShareButton } from '@/components/share-button'
 import {
   getFavorites,
   removeFavorite,
@@ -126,13 +127,22 @@ export default function FavoritesPage() {
                       {TYPE_HANJA[f.type]}
                     </span>
                   </p>
-                  <button
-                    onClick={() => removeFavorite(f.id)}
-                    aria-label="삭제"
-                    className="p-1.5 -m-1.5 text-foreground-dim hover:text-danger transition-colors opacity-0 group-hover:opacity-100"
-                  >
-                    <Trash2 size={13} strokeWidth={1.5} />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <ShareButton
+                      text={f.content}
+                      source={
+                        f.meta?.source ? String(f.meta.source) : undefined
+                      }
+                      size={12}
+                    />
+                    <button
+                      onClick={() => removeFavorite(f.id)}
+                      aria-label="삭제"
+                      className="p-1.5 -m-1.5 text-foreground-dim hover:text-danger transition-colors"
+                    >
+                      <Trash2 size={13} strokeWidth={1.5} />
+                    </button>
+                  </div>
                 </div>
                 <blockquote className="text-[14px] leading-[1.7] text-foreground/90 tracking-tight mb-2">
                   {f.content}

@@ -15,13 +15,55 @@ const notoSerifKR = Noto_Serif_KR({
 })
 
 export const metadata: Metadata = {
-  title: '하루수행 · 일상 속 불교 수행',
-  description: '매일 108배, 명상, 예불을 기록하는 불교 수행 도우미',
+  metadataBase: new URL('https://haru-suhang.vercel.app'),
+  title: {
+    default: '하루수행 · 일상 속 불교 수행',
+    template: '%s · 하루수행',
+  },
+  description:
+    '108배, 명상, 염불, 경전 낭독, AI 법문까지 — 한국 불교 수행을 매일의 리듬으로. 무료로 시작하세요.',
+  keywords: [
+    '불교',
+    '명상',
+    '108배',
+    '수행',
+    '반야심경',
+    '염불',
+    '법문',
+    '마음챙김',
+    'AI 법사',
+    '하루수행',
+  ],
+  authors: [{ name: 'Edithtech' }],
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: '하루수행',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    title: '하루수행 · 일상 속 불교 수행',
+    description:
+      '108배, 명상, 염불, 경전 낭독, AI 법문까지 — 한국 불교 수행을 매일의 리듬으로.',
+    siteName: '하루수행',
+    url: 'https://haru-suhang.vercel.app',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '하루수행 · 일상 속 불교 수행',
+    description: '한국 불교 수행을 매일의 리듬으로. 108배 · 명상 · 염불 · 법문',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 }
 

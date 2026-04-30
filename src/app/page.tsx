@@ -11,6 +11,7 @@ import { DAILY_WISDOMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { MoodBackdrop } from '@/components/mood-backdrop'
 import { FavoriteButton } from '@/components/favorite-button'
+import { ShareButton } from '@/components/share-button'
 import type { DailyStatus, PracticeStats } from '@/types'
 
 const PRACTICES = [
@@ -484,13 +485,20 @@ export default function HomePage() {
             <p className="label-upper text-[10px] text-foreground-dim">
               — {todayWisdom.source}
             </p>
-            <FavoriteButton
-              id={`wisdom-${todayWisdomIdx}`}
-              type="wisdom"
-              content={todayWisdom.text}
-              meta={{ source: todayWisdom.source }}
-              size={16}
-            />
+            <div className="flex items-center gap-2">
+              <ShareButton
+                text={todayWisdom.text}
+                source={todayWisdom.source}
+                size={15}
+              />
+              <FavoriteButton
+                id={`wisdom-${todayWisdomIdx}`}
+                type="wisdom"
+                content={todayWisdom.text}
+                meta={{ source: todayWisdom.source }}
+                size={16}
+              />
+            </div>
           </div>
         </div>
       </section>
