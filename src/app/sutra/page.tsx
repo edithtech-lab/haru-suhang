@@ -164,12 +164,7 @@ export default function SutraPage() {
                   <p className="label-tag mt-2 animate-pulse">AI 해설 생성 중...</p>
                 )}
                 {commentary[idx] && (
-                  <div className="surface-subtle rounded-xl p-3 mt-3">
-                    <p className="label-tag text-accent mb-1.5">AI 해설</p>
-                    <p className="text-[13px] text-foreground/80 leading-[1.65]">
-                      {commentary[idx]}
-                    </p>
-                  </div>
+                  <Commentary text={commentary[idx]} />
                 )}
               </div>
             </div>
@@ -180,6 +175,40 @@ export default function SutraPage() {
       <p className="label-tag text-center pb-8">
         구절을 터치하면 AI 해설을 볼 수 있습니다
       </p>
+    </div>
+  )
+}
+
+// AI 해설 렌더링 — 단락 분리 + 마지막 한 줄 인용구 강조
+function Commentary({ text }: { text: string }) {
+  // 빈 줄 기준으로 단락 분리, 빈 단락 제거
+  const paragraphs = text
+    .split(/\n\s*\n/)
+    .map(p => p.trim())
+    .filter(Boolean)
+
+  // 마지막 단락이 짧고(150자 이하) 의미 있으면 인용구 톤으로 강조
+  const lastIsQuote = paragraphs.length > 1 && paragraphs[paragraphs.length - 1].length <= 150
+  const body = lastIsQuote ? paragraphs.slice(0, -1) : paragraphs
+  const quote = lastIsQuote ? paragraphs[paragraphs.length - 1] : null
+
+  return (
+    <div className="surface-subtle rounded-xl p-4 mt-3 space-y-4">
+      <p className="label-tag text-accent">AI 해설</p>
+      <div className="space-y-3.5">
+        {body.map((p, i) => (
+          <p key={i} className="text-[14px] text-foreground/85 leading-[1.8] tracking-tight">
+            {p}
+          </p>
+        ))}
+      </div>
+      {quote && (
+        <div className="pt-3 border-t border-[var(--surface-border)]">
+          <p className="text-[14px] text-accent-light leading-[1.7] font-serif italic">
+            “{quote.replace(/^["“”']+|["“”']+$/g, '')}”
+          </p>
+        </div>
+      )}
     </div>
   )
 }
