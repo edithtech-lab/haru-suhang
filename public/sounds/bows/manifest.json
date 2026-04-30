@@ -3,8 +3,9 @@
     {
       "id": "hyeonmuk",
       "label": "현묵",
-      "model": "tts-1-hd",
-      "openaiVoice": "onyx",
+      "hanja": "玄默",
+      "googleVoice": "ko-KR-Neural2-C",
+      "tone": "Neural2 · 깊고 차분 (남)",
       "files": {
         "counts": 108,
         "intro": "intro.mp3",
@@ -15,8 +16,9 @@
     {
       "id": "jeongan",
       "label": "정안",
-      "model": "gpt-4o-mini-tts",
-      "openaiVoice": "ash",
+      "hanja": "淨眼",
+      "googleVoice": "ko-KR-Chirp3-HD-Algenib",
+      "tone": "Chirp3 · 따뜻함 (남)",
       "files": {
         "counts": 108,
         "intro": "intro.mp3",
@@ -27,8 +29,9 @@
     {
       "id": "hyeoo",
       "label": "혜오",
-      "model": "gpt-4o-mini-tts",
-      "openaiVoice": "sage",
+      "hanja": "慧悟",
+      "googleVoice": "ko-KR-Chirp3-HD-Kore",
+      "tone": "Chirp3 · 차분 (여)",
       "files": {
         "counts": 108,
         "intro": "intro.mp3",
@@ -39,8 +42,9 @@
     {
       "id": "jaeun",
       "label": "자은",
-      "model": "tts-1-hd",
-      "openaiVoice": "shimmer",
+      "hanja": "慈恩",
+      "googleVoice": "ko-KR-Neural2-B",
+      "tone": "Neural2 · 자연스러움 (여)",
       "files": {
         "counts": 108,
         "intro": "intro.mp3",
@@ -49,5 +53,6 @@
       }
     }
   ],
-  "generatedAt": "2026-04-29T07:24:08.336Z"
+  "generatedAt": "2026-04-30T02:43:38.702Z",
+  "source": "google-cloud-tts"
 }
